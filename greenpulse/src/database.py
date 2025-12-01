@@ -11,7 +11,7 @@ class Database:
         self.connect()
 
     def connect(self):
-        retries = 5
+        retries = 30
         while retries > 0:
             try:
                 # First connect without DB to create it if needed
@@ -24,8 +24,8 @@ class Database:
                 self._init_db()
                 return
             except mysql.connector.Error as err:
-                logger.error(f"Database connection failed: {err}. Retrying in 5s...")
-                time.sleep(5)
+                logger.error(f"Database connection failed: {err}. Retrying in 2s...")
+                time.sleep(2)
                 retries -= 1
         logger.critical("Could not connect to database after retries.")
 

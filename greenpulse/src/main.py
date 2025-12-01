@@ -9,8 +9,14 @@ from weather import weather_service
 from calculation import calculator
 
 # Configure logging
+log_level = config.get("log_level", "INFO").upper()
+valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+if log_level not in valid_levels:
+    # Fallback if config is messed up (e.g. contains the whole list string)
+    log_level = "INFO"
+
 logging.basicConfig(
-    level=getattr(logging, config.get("log_level", "INFO").upper()),
+    level=getattr(logging, log_level),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger("GreenPulse.Main")
