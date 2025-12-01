@@ -33,6 +33,5 @@ RUN \
   && sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/httpd.conf
 
 # Fix permissions
-RUN chmod a+x /run.sh
-
-CMD [ "/run.sh" ]
+# Fix permissions
+RUN chmod a+x /etc/cont-init.d/00-greenpulse.sh /etc/services.d/*/run
