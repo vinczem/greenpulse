@@ -13,6 +13,40 @@ fi
 # Ensure permissions
 chown -R mysql:mysql /data/mysql
 
+# Create greenpulse user and grant permissions
+bashio::log.info "Setting up database user..."
+# Start temporary mysqld
+/usr/bin/mysqld_safe --datadir=/data/mysql --user=mysql --skip-networking &
+PID=$!
+
+# Wait for it to be ready
+bashio::log.info "Waiting for temporary MariaDB..."
+for i in {1..30}; do
+    if mysql -u root -e "SELECT 1" &> /dev/null; then
+        break
+    fi
+    sleep 1
+done
+
+# Create user and database
+bashio::log.info "Creating user and database..."
+mysql -u root <<EOF
+CREATE DATABASE IF NOT EXISTS greenpulse;
+CREATE USER IF NOT EXISTS 'greenpulse'@'%' IDENTIFIED BY 'greenpulse';
+GRANT ALL PRIVILEGES ON *.* TO 'greenpulse'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EOF
+
+# Stop temporary mysqld
+bashio::log.info "Stopping temporary MariaDB..."
+if [ -f /run/mysqld/mysqld.pid ]; then
+    kill $(cat /run/mysqld/mysqld.pid)
+else
+    kill $PID
+fi
+wait $PID
+
+
 # Configure phpMyAdmin (basic)
 # We might need to generate a config.inc.php with a random blowfish secret
 if [ ! -f "/var/www/localhost/htdocs/phpmyadmin/config.inc.php" ]; then

@@ -38,11 +38,11 @@ class Config:
 
     @property
     def db_user(self):
-        return "root"
+        return "greenpulse"
 
     @property
     def db_password(self):
-        return "" # Default for local mysql_install_db
+        return "greenpulse"
 
     @property
     def db_name(self):
