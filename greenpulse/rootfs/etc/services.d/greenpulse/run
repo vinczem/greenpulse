@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting GreenPulse Application..."
+# We need to wait for MariaDB to be ready.
+# A simple sleep loop or wait-for-it approach.
+bashio::log.info "Waiting for database..."
+sleep 10
+
+exec python3 /app/src/main.py

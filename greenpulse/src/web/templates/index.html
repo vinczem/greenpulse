@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenPulse Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Simple Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">GreenPulse</div>
+        <div class="links">
+            <a href="/" class="active">Dashboard</a>
+            <a href="/logs">Napló</a>
+            <a href="/settings">Beállítások</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Áttekintés</h1>
+        </header>
+
+        <div class="grid">
+            <div class="card status-card">
+                <h2>Legutóbbi javaslat</h2>
+                {% if last_suggestion %}
+                <div class="status-value {% if last_suggestion.water_amount > 0 %}active{% endif %}">
+                    {{ last_suggestion.water_amount }} L/m²
+                </div>
+                <p class="reason">{{ last_suggestion.reason }}</p>
+                <p class="timestamp">{{ last_suggestion.timestamp }}</p>
+                {% else %}
+                <p>Nincs adat.</p>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h2>Utolsó öntözés</h2>
+                {% if last_watering %}
+                <div class="status-value">
+                    {{ last_watering.water_amount }} L/m²
+                </div>
+                <p class="reason">{{ last_watering.notes }}</p>
+                <p class="timestamp">{{ last_watering.timestamp }}</p>
+                {% else %}
+                <p>Még nem történt öntözés.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card full-width">
+            <h2>Időjárás történet</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dátum</th>
+                        <th>Max hőm.</th>
+                        <th>Csapadék</th>
+                        <th>Páratartalom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in weather_history %}
+                    <tr>
+                        <td>{{ day.timestamp }}</td>
+                        <td>{{ day.temp_max }} °C</td>
+                        <td>{{ day.precipitation }} mm</td>
+                        <td>{{ day.humidity }} %</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

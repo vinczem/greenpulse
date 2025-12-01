@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenPulse Napló</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">GreenPulse</div>
+        <div class="links">
+            <a href="/">Dashboard</a>
+            <a href="/logs" class="active">Napló</a>
+            <a href="/settings">Beállítások</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Öntözési Napló</h1>
+        <div class="card full-width">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Időpont</th>
+                        <th>Esemény</th>
+                        <th>Mennyiség</th>
+                        <th>Indoklás / Megjegyzés</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.timestamp }}</td>
+                        <td>
+                            <span class="badge {{ log.event_type }}">
+                                {{ log.event_type }}
+                            </span>
+                        </td>
+                        <td>{{ log.water_amount }} L/m²</td>
+                        <td>{{ log.reason or log.notes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

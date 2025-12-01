@@ -1,0 +1,6 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting Apache (phpMyAdmin)..."
+# Make sure apache pid file is cleaned up
+rm -f /run/apache2/httpd.pid
+exec /usr/sbin/httpd -D FOREGROUND

@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting MariaDB..."
+exec /usr/bin/mysqld_safe --datadir=/data/mysql --user=mysql

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+jinja2
+mysql-connector-python
+paho-mqtt
+requests
+python-multipart
+schedule

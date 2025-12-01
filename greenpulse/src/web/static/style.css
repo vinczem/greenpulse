@@ -1,0 +1,102 @@
+:root {
+    --primary: #4CAF50;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+    --danger: #e74c3c;
+    --warning: #f1c40f;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+nav {
+    background-color: var(--dark);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+nav .links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+nav .links a:hover, nav .links a.active {
+    opacity: 1;
+    border-bottom: 2px solid var(--primary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.status-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--dark);
+    margin: 1rem 0;
+}
+
+.status-value.active {
+    color: var(--primary);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    color: #7f8c8d;
+    font-weight: 600;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.badge.suggestion { background: #e3f2fd; color: #1976d2; }
+.badge.watering_end { background: #e8f5e9; color: #2e7d32; }
+.badge.manual { background: #fff3e0; color: #f57c00; }
