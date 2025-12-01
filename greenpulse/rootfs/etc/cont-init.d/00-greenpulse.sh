@@ -33,7 +33,11 @@ bashio::log.info "Creating user and database..."
 mysql -u root <<EOF
 CREATE DATABASE IF NOT EXISTS greenpulse;
 CREATE USER IF NOT EXISTS 'greenpulse'@'%' IDENTIFIED BY 'greenpulse';
+CREATE USER IF NOT EXISTS 'greenpulse'@'localhost' IDENTIFIED BY 'greenpulse';
+CREATE USER IF NOT EXISTS 'greenpulse'@'127.0.0.1' IDENTIFIED BY 'greenpulse';
 GRANT ALL PRIVILEGES ON *.* TO 'greenpulse'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'greenpulse'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'greenpulse'@'127.0.0.1' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
 
