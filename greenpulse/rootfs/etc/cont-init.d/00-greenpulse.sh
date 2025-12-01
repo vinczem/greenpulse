@@ -38,12 +38,9 @@ FLUSH PRIVILEGES;
 EOF
 
 # Stop temporary mysqld
+# Stop temporary mysqld
 bashio::log.info "Stopping temporary MariaDB..."
-if [ -f /run/mysqld/mysqld.pid ]; then
-    kill $(cat /run/mysqld/mysqld.pid)
-else
-    kill $PID
-fi
+mysqladmin -u root shutdown
 wait $PID
 
 
