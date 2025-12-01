@@ -101,11 +101,11 @@ def main():
     # Schedule jobs
     interval = config.get("weather_update_interval_min", 60)
     schedule.every(interval).minutes.do(job_check_weather_and_calculate)
-    schedule.every(5).minutes.do(job_heartbeat)
+    schedule.every(1).minutes.do(job_heartbeat)
     
     # Run once immediately
     job_heartbeat()
-    # job_check_weather_and_calculate() # Optional: run on startup
+    job_check_weather_and_calculate()
     
     logger.info(f"Scheduler configured. Interval: {interval} min.")
     
