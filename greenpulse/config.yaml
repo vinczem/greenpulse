@@ -53,7 +53,7 @@ schema:
   force_watering_minutes: int
   grass_type: list(Univerzális keverék, Sportfű, Díszfű, Szárazságtűrő, Egyéb)
   soil_type: list(Agyagos, Homokos, Vályog, Humuszos, Nem tudom)
-  shade_percentage: int(0, 100)
+  shade_percentage: int(0,100)
   min_watering_amount: float
   max_watering_amount: float
 ports:
