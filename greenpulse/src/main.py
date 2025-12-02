@@ -81,7 +81,26 @@ def job_check_weather_and_calculate():
     except Exception as e:
         logger.error(f"DB Error fetching irrigation history: {e}")
 
-    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data, irrigation_history_amount)
+    # Check if watered today (for forced watering logic)
+    has_watered_today = False
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        today_start = datetime.now().strftime("%Y-%m-%d 00:00:00")
+        cursor.execute("""
+            SELECT COUNT(*) 
+            FROM irrigation_logs 
+            WHERE event_type IN ('manual', 'watering_end') 
+            AND timestamp >= %s
+        """, (today_start,))
+        result = cursor.fetchone()
+        if result and result[0] > 0:
+            has_watered_today = True
+        cursor.close()
+    except Exception as e:
+        logger.error(f"DB Error checking today's watering: {e}")
+
+    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data, irrigation_history_amount, has_watered_today)
     
     # 3. Publish Result
     mqtt_client.publish_command(required, amount, reason)

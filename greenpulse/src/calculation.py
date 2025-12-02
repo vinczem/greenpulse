@@ -10,6 +10,8 @@ class CalculationEngine:
         self.shade_pct = config.get("shade_percentage", 0)
         self.min_amount = config.get("min_watering_amount", 5)
         self.max_amount = config.get("max_watering_amount", 25)
+        self.force_daily = config.get("force_daily_watering", False)
+        self.force_amount = config.get("force_watering_amount", 5.0)
 
     def get_soil_retention_factor(self):
         """
@@ -23,7 +25,7 @@ class CalculationEngine:
         if "humuszos" in st: return 1.1
         return 1.0
 
-    def calculate_needs(self, current_weather, forecast, history_data, irrigation_history_amount=0):
+    def calculate_needs(self, current_weather, forecast, history_data, irrigation_history_amount=0, has_watered_today=False):
         """
         Calculate irrigation needs based on weather data.
         Returns: (required: bool, amount: float, reason: str, details: dict)
@@ -105,6 +107,20 @@ class CalculationEngine:
             "kc": kc
         }
 
+        # Forced Watering Logic
+        if self.force_daily and not has_watered_today:
+            # We must water at least force_amount
+            # Check if weather calculation suggests more
+            weather_amount = 0
+            if deficit > self.min_amount:
+                weather_amount = min(deficit, self.max_amount)
+            
+            if weather_amount > self.force_amount:
+                return True, round(weather_amount, 1), f"Időjárás alapú öntözés (több mint a kényszerített {self.force_amount} mm).", details
+            else:
+                return True, round(self.force_amount, 1), "Kényszerített napi öntözés.", details
+
+        # Standard Logic
         if deficit > self.min_amount:
             amount = min(deficit, self.max_amount)
             reason = f"Vízhiány: {deficit:.1f} mm. ET: {et_adjusted:.1f} mm/nap."

@@ -1,4 +1,22 @@
 # Changelog
+
+## [0.1.27]
+Kényszerített öntözés logikája:
+Mértékegység váltás: A beállításokban a force_watering_minutes helyett mostantól force_watering_amount van, ami mm-ben (liter/m²) várja az értéket. (A régi perc alapú beállítás törlődött).
+
+Új logika:
+A rendszer minden kalkulációnál megnézi, hogy történt-e már ma öntözés (akár kézi, akár automatikus).
+Ha a "Kényszerített napi öntözés" be van kapcsolva, ÉS még nem volt ma öntözés:
+Akkor mindenképpen javasolni fog locsolást.
+Ha az időjárás indokolná a locsolást, és az több, mint a kényszerített mennyiség, akkor az időjárás alapú mennyiséget javasolja. (Indoklás: "Időjárás alapú öntözés (több mint a kényszerített X mm)")
+Ha az időjárás nem indokolná, vagy kevesebbet indokolna, akkor a kényszerített mennyiséget javasolja. (Indoklás: "Kényszerített napi öntözés.")
+Ha már volt ma öntözés, akkor a kényszerítés "kikapcsol" mára, és csak akkor javasol újabb locsolást, ha az időjárás miatt drasztikus vízhiány lépne fel (normál működés).
+
+## [0.1.19] - 2025-12-02
+
+### Fixed
+- **Calculation**: Fixed unit conversion for ET0 calculation.
+
 ## [0.1.18] - 2025-12-02
 Add three dynamic charts:
 - Vízmérleg: Shows the water supply history.
