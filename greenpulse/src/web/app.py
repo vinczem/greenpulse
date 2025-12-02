@@ -92,6 +92,33 @@ async def get_chart_data():
     irrigation_data = cursor.fetchall()
     
     cursor.close()
+
+    # Append today's data to weather_data if not present
+    from datetime import datetime
+    from weather import weather_service
+    
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    # Check if today is already in weather_data
+    has_today = False
+    if weather_data:
+        last_date = str(weather_data[-1]['timestamp']).split(' ')[0]
+        if last_date == today_str:
+            has_today = True
+            
+    if not has_today:
+        try:
+            current = weather_service.get_current_weather()
+            if current:
+                weather_data.append({
+                    "timestamp": f"{today_str} 12:00:00",
+                    "temp_max": current.get('temperature', 0), # Proxy
+                    "temp_min": current.get('temperature', 0), # Proxy
+                    "precipitation": current.get('rain_amount', 0),
+                    "humidity": current.get('humidity', 0),
+                    "wind_speed": current.get('wind_speed', 0)
+                })
+        except Exception as e:
+            logger.error(f"Error fetching current weather for chart: {e}")
     
     return {
         "weather": weather_data,
