@@ -50,6 +50,6 @@ class Config:
 
     @property
     def web_port(self):
-        return int(os.environ.get("GREENPULSE_WEB_PORT", 8088))
+        return int(os.environ.get("GREENPULSE_WEB_PORT", 8099))
 
 config = Config()

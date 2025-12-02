@@ -1,5 +1,5 @@
 name: "GreenPulse"
-version: "0.1.23"
+version: "0.1.24"
 slug: "greenpulse"
 description: "Intelligent irrigation planner with OpenWeatherMap integration and local database"
 url: "https://github.com/vinczem/greenpulse"
@@ -56,10 +56,10 @@ schema:
   min_watering_amount: float
   max_watering_amount: float
 ports:
-  8088/tcp: 8088
+  8099/tcp: 8099
   8081/tcp: 8081
 ports_description:
-  8088/tcp: Web Interface
+  8099/tcp: Web Interface
   8081/tcp: phpMyAdmin
 ingress: true
-ingress_port: 8088
+ingress_port: 8099
