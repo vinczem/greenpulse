@@ -27,7 +27,7 @@
 
         <div class="grid">
             <div class="card full-width">
-                <h2>Vízmérleg (Elmúlt 30 nap)</h2>
+                <h2>Vízmérleg (elmúlt 30 nap)</h2>
                 <div class="chart-container">
                     <canvas id="waterBalanceChart"></canvas>
                 </div>
@@ -82,6 +82,19 @@
             const irrigationData = labels.map(date => irrigationMap[date] || 0);
             const totalSupply = labels.map((date, i) => rain[i] + (irrigationMap[date] || 0));
 
+            // Common legend options
+            const legendOptions = {
+                display: true,
+                position: 'top',
+                align: 'center',
+                labels: {
+                    color: '#e0e0e0',
+                    font: { size: 12 },
+                    padding: 15,
+                    boxWidth: 15
+                }
+            };
+
             // 1. Water Balance Chart
             new Chart(document.getElementById('waterBalanceChart'), {
                 type: 'line',
@@ -100,8 +113,9 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { labels: { color: '#fff' } }
+                        legend: legendOptions
                     },
                     scales: {
                         y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } },
@@ -134,8 +148,9 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { labels: { color: '#fff' } }
+                        legend: legendOptions
                     },
                     scales: {
                         y: {
@@ -173,8 +188,9 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { labels: { color: '#fff' } }
+                        legend: legendOptions
                     }
                 }
             });
