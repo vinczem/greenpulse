@@ -33,76 +33,93 @@
                     {{ last_suggestion.water_amount }} L/m²
                 </div>
                 <p class="reason">{{ last_suggestion.reason }}</p>
-                <li>Szél: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
-                </ul>
+                <p class="timestamp">{{ last_suggestion.timestamp }}</p>
+                {% if last_suggestion.raw_data %}
+                <div class="details-box"
+                    style="margin-top: 15px; text-align: left; font-size: 0.9em; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                    <p><strong>Számított vízigény (ET):</strong> {{ last_suggestion.raw_data.et_adjusted }} mm/nap</p>
+                    <p><strong>Rendelkezésre álló víz:</strong> {{ last_suggestion.raw_data.effective_supply }} mm</p>
+                    <ul style="margin: 5px 0 10px 20px; font-size: 0.85em; color: #ccc;">
+                        <li>Eső (múlt+jelen): {{ last_suggestion.raw_data.recent_rain +
+                            last_suggestion.raw_data.current_rain }} mm</li>
+                        <li>Öntözés (múlt): {{ last_suggestion.raw_data.irrigation_history }} mm</li>
+                        <li>Előrejelzés: {{ last_suggestion.raw_data.forecast_rain }} mm</li>
+                    </ul>
+                    <p><strong>Talaj korrekció:</strong> x{{ last_suggestion.raw_data.soil_retention_factor }}</p>
+                    <p><strong>Időjárás tényezők:</strong></p>
+                    <ul style="margin: 5px 0 0 20px; font-size: 0.85em; color: #ccc;">
+                        <li>Hőmérséklet: {{ last_suggestion.raw_data.temperature }} °C</li>
+                        <li>Páratartalom: {{ last_suggestion.raw_data.humidity }} %</li>
+                        <li>Szél: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% else %}
+                <p>Nincs adat.</p>
+                {% endif %}
             </div>
-            {% endif %}
-            {% else %}
-            <p>Nincs adat.</p>
-            {% endif %}
+
+            <div class="card">
+                <h2>Utolsó öntözés</h2>
+                {% if last_watering %}
+                <div class="status-value">
+                    {{ last_watering.water_amount }} L/m²
+                </div>
+                <p class="reason">{{ last_watering.notes }}</p>
+                <p class="timestamp">{{ last_watering.timestamp }}</p>
+                {% else %}
+                <p>Még nem történt öntözés.</p>
+                {% endif %}
+            </div>
         </div>
 
-        <div class="card">
-            <h2>Utolsó öntözés</h2>
-            {% if last_watering %}
-            <div class="status-value">
-                {{ last_watering.water_amount }} L/m²
-            </div>
-            <p class="reason">{{ last_watering.notes }}</p>
-            <p class="timestamp">{{ last_watering.timestamp }}</p>
-            {% else %}
-            <p>Még nem történt öntözés.</p>
-            {% endif %}
+        <div class="card full-width">
+            <h2>Időjárás történet</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dátum</th>
+                        <th>Max hőm.</th>
+                        <th>Csapadék</th>
+                        <th>Páratartalom</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in weather_history %}
+                    <tr>
+                        <td>{{ day.timestamp }}</td>
+                        <td>{{ day.temp_max }} °C</td>
+                        <td>{{ day.precipitation }} mm</td>
+                        <td>{{ day.humidity }} %</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    <div class="card full-width">
-        <h2>Időjárás történet</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Dátum</th>
-                    <th>Max hőm.</th>
-                    <th>Csapadék</th>
-                    <th>Páratartalom</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for day in weather_history %}
-                <tr>
-                    <td>{{ day.timestamp }}</td>
-                    <td>{{ day.temp_max }} °C</td>
-                    <td>{{ day.precipitation }} mm</td>
-                    <td>{{ day.humidity }} %</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="card full-width">
-        <h2>Tudnivalók a beállításokról</h2>
-        <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <h3>Fű típusok hatása</h3>
-                <ul>
-                    <li><strong>Sportfű:</strong> Magasabb vízigény (+10%).</li>
-                    <li><strong>Szárazságtűrő:</strong> Alacsonyabb vízigény (-30%).</li>
-                    <li><strong>Univerzális / Egyéb:</strong> Normál vízigény.</li>
-                </ul>
-            </div>
-            <div>
-                <h3>Talaj típusok hatása</h3>
-                <ul>
-                    <li><strong>Homokos:</strong> Gyorsan átereszti a vizet. A rendszer 20%-kal csökkenti a
-                        számított vízkészletet (gyakoribb öntözés).</li>
-                    <li><strong>Agyagos:</strong> Jól tartja a vizet. A rendszer 20%-kal növeli a számított
-                        vízkészletet (ritkább öntözés).</li>
-                    <li><strong>Vályog / Humuszos:</strong> Kiegyensúlyozott vízgazdálkodás.</li>
-                </ul>
+        <div class="card full-width">
+            <h2>Tudnivalók a beállításokról</h2>
+            <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3>Fű típusok hatása</h3>
+                    <ul>
+                        <li><strong>Sportfű:</strong> Magasabb vízigény (+10%).</li>
+                        <li><strong>Szárazságtűrő:</strong> Alacsonyabb vízigény (-30%).</li>
+                        <li><strong>Univerzális / Egyéb:</strong> Normál vízigény.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Talaj típusok hatása</h3>
+                    <ul>
+                        <li><strong>Homokos:</strong> Gyorsan átereszti a vizet. A rendszer 20%-kal csökkenti a
+                            számított vízkészletet (gyakoribb öntözés).</li>
+                        <li><strong>Agyagos:</strong> Jól tartja a vizet. A rendszer 20%-kal növeli a számított
+                            vízkészletet (ritkább öntözés).</li>
+                        <li><strong>Vályog / Humuszos:</strong> Kiegyensúlyozott vízgazdálkodás.</li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </body>
 
