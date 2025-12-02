@@ -1,0 +1,61 @@
+configuration:
+  openweathermap_api_key:
+    name: "OpenWeatherMap API Key"
+    description: "API key for OpenWeatherMap to fetch weather data."
+  latitude:
+    name: "Latitude"
+    description: "Geographical latitude of the installation location."
+  longitude:
+    name: "Longitude"
+    description: "Geographical longitude of the installation location."
+  pump_capacity_lpm2:
+    name: "Pump Capacity (l/min/m2)"
+    description: "Pump capacity in liters per minute per square meter."
+  mqtt_host:
+    name: "MQTT Host"
+    description: "Hostname or IP address of the MQTT broker."
+  mqtt_port:
+    name: "MQTT Port"
+    description: "Port of the MQTT broker (default: 1883)."
+  mqtt_user:
+    name: "MQTT Username"
+    description: "Username for MQTT broker authentication."
+  mqtt_password:
+    name: "MQTT Password"
+    description: "Password for MQTT broker authentication."
+  mqtt_topic_command:
+    name: "MQTT Command Topic"
+    description: "Topic for receiving commands."
+  mqtt_topic_heartbeat:
+    name: "MQTT Heartbeat Topic"
+    description: "Topic for sending heartbeat messages."
+  mqtt_topic_feedback:
+    name: "MQTT Feedback Topic"
+    description: "Topic for sending feedback messages."
+  weather_update_interval_min:
+    name: "Weather Update Interval (min)"
+    description: "Frequency of weather data updates in minutes."
+  log_level:
+    name: "Log Level"
+    description: "Verbosity level of the logs."
+  force_daily_watering:
+    name: "Force Daily Watering"
+    description: "If enabled, watering will occur every day for the specified duration, regardless of calculations."
+  force_watering_minutes:
+    name: "Force Watering Duration (min)"
+    description: "Duration of forced watering in minutes."
+  grass_type:
+    name: "Grass Type"
+    description: "Type of grass, affecting water requirements."
+  soil_type:
+    name: "Soil Type"
+    description: "Type of soil, affecting water retention."
+  shade_percentage:
+    name: "Shade Percentage (%)"
+    description: "Percentage of shade on the area (0-100)."
+  min_watering_amount:
+    name: "Min. Watering Amount (mm)"
+    description: "Minimum amount of water to apply in millimeters."
+  max_watering_amount:
+    name: "Max. Watering Amount (mm)"
+    description: "Maximum amount of water to apply in millimeters."

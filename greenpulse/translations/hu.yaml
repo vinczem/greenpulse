@@ -1,0 +1,61 @@
+configuration:
+  openweathermap_api_key:
+    name: "OpenWeatherMap API Kulcs"
+    description: "Az OpenWeatherMap szolgáltatáshoz tartozó API kulcs az időjárási adatok lekéréséhez."
+  latitude:
+    name: "Földrajzi szélesség"
+    description: "A telepítés helyének földrajzi szélessége (pl. 47.4979)."
+  longitude:
+    name: "Földrajzi hosszúság"
+    description: "A telepítés helyének földrajzi hosszúsága (pl. 19.0402)."
+  pump_capacity_lpm2:
+    name: "Szivattyú kapacitás (l/perc/m2)"
+    description: "A szivattyú teljesítménye liter/perc/négyzetméter egységben."
+  mqtt_host:
+    name: "MQTT Bróker címe"
+    description: "Az MQTT bróker hosztneve vagy IP címe (pl. core-mosquitto)."
+  mqtt_port:
+    name: "MQTT Port"
+    description: "Az MQTT bróker portja (alapértelmezett: 1883)."
+  mqtt_user:
+    name: "MQTT Felhasználónév"
+    description: "Felhasználónév az MQTT brókerhez való csatlakozáshoz (ha szükséges)."
+  mqtt_password:
+    name: "MQTT Jelszó"
+    description: "Jelszó az MQTT brókerhez való csatlakozáshoz (ha szükséges)."
+  mqtt_topic_command:
+    name: "MQTT parancs topic"
+    description: "A topic, ahová a parancsokat várja a rendszer."
+  mqtt_topic_heartbeat:
+    name: "MQTT Heartbeat topic"
+    description: "A topic, ahová a rendszer életjeleket küld."
+  mqtt_topic_feedback:
+    name: "MQTT Visszajelzés topic"
+    description: "A topic, ahová a rendszer visszajelzéseket küld."
+  weather_update_interval_min:
+    name: "Időjárás frissítés (perc)"
+    description: "Milyen gyakran frissítse az időjárási adatokat percekben."
+  log_level:
+    name: "Naplózási szint"
+    description: "A naplózás részletessége."
+  force_daily_watering:
+    name: "Kényszerített napi öntözés"
+    description: "Ha be van kapcsolva, minden nap fog öntözni a megadott ideig, függetlenül a számítástól."
+  force_watering_minutes:
+    name: "Kényszerített öntözés (perc)"
+    description: "A kényszerített öntözés időtartama percekben."
+  grass_type:
+    name: "Fű típusa"
+    description: "A gyep típusa, amely befolyásolja a vízigényt."
+  soil_type:
+    name: "Talaj típusa"
+    description: "A talaj típusa, amely befolyásolja a vízmegtartó képességet."
+  shade_percentage:
+    name: "Árnyékoltság (%)"
+    description: "A terület árnyékoltsága százalékban (0-100)."
+  min_watering_amount:
+    name: "Min. öntözés (mm)"
+    description: "A minimális öntözési mennyiség milliméterben."
+  max_watering_amount:
+    name: "Max. öntözés (mm)"
+    description: "A maximális öntözési mennyiség milliméterben."
