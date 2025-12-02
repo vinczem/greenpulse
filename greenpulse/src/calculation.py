@@ -26,10 +26,10 @@ class CalculationEngine:
     def calculate_needs(self, current_weather, forecast, history_data):
         """
         Calculate irrigation needs based on weather data.
-        Returns: (required: bool, amount: float, reason: str)
+        Returns: (required: bool, amount: float, reason: str, details: dict)
         """
         if not current_weather or not forecast:
-            return False, 0, "Hiányzó időjárási adatok"
+            return False, 0, "Hiányzó időjárási adatok", {}
 
         # 1. Calculate ET0 (Reference Evapotranspiration) - Simplified Penman-Monteith approximation
         # We use a very simplified formula here for demonstration.
@@ -87,15 +87,32 @@ class CalculationEngine:
         
         logger.info(f"Calc: ET={et_adjusted:.2f}, Supply={total_water_supply:.2f} (Eff={effective_supply:.2f}), Deficit={deficit:.2f}")
         
+        details = {
+            "et0": round(et0, 2),
+            "et_adjusted": round(et_adjusted, 2),
+            "total_water_supply": round(total_water_supply, 2),
+            "effective_supply": round(effective_supply, 2),
+            "deficit": round(deficit, 2),
+            "recent_rain": round(recent_rain, 2),
+            "forecast_rain": round(forecast_rain, 2),
+            "current_rain": round(current_rain, 2),
+            "soil_retention_factor": retention_factor,
+            "shade_factor": self.shade_pct,
+            "wind_speed": wind,
+            "temperature": temp,
+            "humidity": humidity,
+            "kc": kc
+        }
+
         if deficit > self.min_amount:
             amount = min(deficit, self.max_amount)
-            return True, round(amount, 1), f"Vízhiány: {deficit:.1f}mm. ET: {et_adjusted:.1f}mm/nap."
+            return True, round(amount, 1), f"Vízhiány: {deficit:.1f}mm. ET: {et_adjusted:.1f}mm/nap.", details
         else:
             if forecast_rain > 5:
-                return False, 0, "Eső várható a következő 24 órában."
+                return False, 0, "Eső várható a következő 24 órában.", details
             elif recent_rain > 10:
-                return False, 0, "Az elmúlt napok csapadéka elegendő."
+                return False, 0, "Az elmúlt napok csapadéka elegendő.", details
             else:
-                return False, 0, "Nincs szükség öntözésre (egyensúlyban)."
+                return False, 0, "Nincs szükség öntözésre (egyensúlyban).", details
 
 calculator = CalculationEngine()

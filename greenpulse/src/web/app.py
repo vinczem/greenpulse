@@ -46,6 +46,13 @@ async def read_root(request: Request):
     weather_history = cursor.fetchall()
     
     cursor.close()
+
+    import json
+    if last_suggestion and last_suggestion.get('raw_data'):
+        try:
+            last_suggestion['raw_data'] = json.loads(last_suggestion['raw_data'])
+        except:
+            last_suggestion['raw_data'] = {}
     
     return templates.TemplateResponse("index.html", {
         "request": request,

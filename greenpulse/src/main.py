@@ -61,19 +61,20 @@ def job_check_weather_and_calculate():
                 logger.error(f"DB Error saving history: {e}")
 
     # 2. Calculate Needs
-    required, amount, reason = calculator.calculate_needs(current, forecast, history_data)
+    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data)
     
     # 3. Publish Result
     mqtt_client.publish_command(required, amount, reason)
     
     # 4. Log Suggestion to DB
     try:
+        import json
         conn = db.get_connection()
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO irrigation_logs (event_type, water_amount, reason, raw_data)
             VALUES ('suggestion', %s, %s, %s)
-        """, (amount if required else 0, reason, "{}")) # raw_data could be weather snapshot
+        """, (amount if required else 0, reason, json.dumps(details)))
         conn.commit()
         cursor.close()
     except Exception as e:
