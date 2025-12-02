@@ -107,9 +107,14 @@ class CalculationEngine:
 
         if deficit > self.min_amount:
             amount = min(deficit, self.max_amount)
-            return True, round(amount, 1), f"Vízhiány: {deficit:.1f}mm. ET: {et_adjusted:.1f}mm/nap.", details
+            reason = f"Vízhiány: {deficit:.1f} mm. ET: {et_adjusted:.1f} mm/nap."
+            if deficit > self.max_amount:
+                reason += f" (Maximumra korlátozva: {self.max_amount} mm)"
+            return True, round(amount, 1), reason, details
         else:
-            if forecast_rain > 5:
+            if deficit > 0:
+                return False, 0, f"A vízhiány ({deficit:.1f} mm) nem éri el a minimumot ({self.min_amount} mm).", details
+            elif forecast_rain > 5:
                 return False, 0, "Eső várható a következő 24 órában.", details
             elif recent_rain > 10:
                 return False, 0, "Az elmúlt napok csapadéka elegendő.", details
