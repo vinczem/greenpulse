@@ -1,6 +1,24 @@
 # Changelog
+## [0.1.17] - 2025-12-02
+### Added
+- **Manual Watering History**: It now looks back 3 days (matching the weather history) for any manual watering events.
+- This amount is added to the "Available Water" (Rendelkezésre álló víz).
+- The dashboard will show this as "Öntözés (múlt)".
 
-## [0.1.11] - 2025-12-02
+### Changed
+- **Configuration**: `log_level` is now a dropdown selector in the Home Assistant Add-on configuration, making it easier to use.
+
+## [0.1.16] 
+
+## [0.1.15] 
+
+## [0.1.14] 
+
+## [0.1.13] 
+
+## [0.1.12] 
+
+## [0.1.11]
 
 ### Added
 - **Configuration**: Added `shade_percentage` to the configuration schema.

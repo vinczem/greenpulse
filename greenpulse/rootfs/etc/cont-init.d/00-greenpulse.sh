@@ -16,13 +16,13 @@ chown -R mysql:mysql /data/mysql
 # Create greenpulse user and grant permissions
 bashio::log.info "Setting up database user..."
 # Start temporary mysqld
-/usr/bin/mysqld_safe --datadir=/data/mysql --user=mysql --skip-networking &
+/usr/bin/mariadbd-safe --datadir=/data/mysql --user=mysql --skip-networking &
 PID=$!
 
 # Wait for it to be ready
 bashio::log.info "Waiting for temporary MariaDB..."
 for i in {1..30}; do
-    if mysql -u root -e "SELECT 1" &> /dev/null; then
+    if mariadb -u root -e "SELECT 1" &> /dev/null; then
         break
     fi
     sleep 1
@@ -30,7 +30,7 @@ done
 
 # Create user and database
 bashio::log.info "Creating user and database..."
-mysql -u root <<EOF
+mariadb -u root <<EOF
 CREATE DATABASE IF NOT EXISTS greenpulse;
 CREATE USER IF NOT EXISTS 'greenpulse'@'%' IDENTIFIED BY 'greenpulse';
 CREATE USER IF NOT EXISTS 'greenpulse'@'localhost' IDENTIFIED BY 'greenpulse';
@@ -44,7 +44,7 @@ EOF
 # Stop temporary mysqld
 # Stop temporary mysqld
 bashio::log.info "Stopping temporary MariaDB..."
-mysqladmin -u root shutdown
+mariadb-admin -u root shutdown
 wait $PID
 
 

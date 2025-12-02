@@ -23,7 +23,7 @@ class CalculationEngine:
         if "humuszos" in st: return 1.1
         return 1.0
 
-    def calculate_needs(self, current_weather, forecast, history_data):
+    def calculate_needs(self, current_weather, forecast, history_data, irrigation_history_amount=0):
         """
         Calculate irrigation needs based on weather data.
         Returns: (required: bool, amount: float, reason: str, details: dict)
@@ -69,7 +69,7 @@ class CalculationEngine:
         # Current rain
         current_rain = current_weather.get('rain_amount', 0)
         
-        total_water_supply = recent_rain + current_rain + (forecast_rain * 0.8) # 80% confidence in forecast
+        total_water_supply = recent_rain + current_rain + (forecast_rain * 0.8) + irrigation_history_amount # 80% confidence in forecast
         
         # Apply Soil Retention Factor
         # If factor < 1 (Sandy), effective supply is reduced, increasing deficit.
@@ -96,6 +96,7 @@ class CalculationEngine:
             "recent_rain": round(recent_rain, 2),
             "forecast_rain": round(forecast_rain, 2),
             "current_rain": round(current_rain, 2),
+            "irrigation_history": round(irrigation_history_amount, 2),
             "soil_retention_factor": retention_factor,
             "shade_factor": self.shade_pct,
             "wind_speed": wind,

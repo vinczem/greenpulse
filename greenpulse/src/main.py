@@ -61,7 +61,27 @@ def job_check_weather_and_calculate():
                 logger.error(f"DB Error saving history: {e}")
 
     # 2. Calculate Needs
-    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data)
+    # Fetch irrigation history (last 3 days to match weather history)
+    irrigation_history_amount = 0
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        # Calculate start date (3 days ago)
+        start_date = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("""
+            SELECT SUM(water_amount) as total 
+            FROM irrigation_logs 
+            WHERE event_type IN ('manual', 'watering_end') 
+            AND timestamp >= %s
+        """, (start_date,))
+        result = cursor.fetchone()
+        if result and result[0]:
+            irrigation_history_amount = float(result[0])
+        cursor.close()
+    except Exception as e:
+        logger.error(f"DB Error fetching irrigation history: {e}")
+
+    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data, irrigation_history_amount)
     
     # 3. Publish Result
     mqtt_client.publish_command(required, amount, reason)
