@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenPulse Statisztika</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">GreenPulse</div>
+        <div class="links">
+            <a href="./">Dashboard</a>
+            <a href="logs">Napló</a>
+            <a href="analytics" class="active">Statisztika</a>
+            <a href="settings">Beállítások</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Statisztika</h1>
+        </header>
+
+        <div class="grid">
+            <div class="card full-width">
+                <h2>Vízmérleg (Elmúlt 30 nap)</h2>
+                <div class="chart-container">
+                    <canvas id="waterBalanceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2>Időjárás trendek</h2>
+                <div class="chart-container">
+                    <canvas id="weatherChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Vízforrás megoszlás</h2>
+                <div class="chart-container">
+                    <canvas id="sourceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('/api/chart-data');
+            const data = await response.json();
+            renderCharts(data);
+        }
+
+        function renderCharts(data) {
+            const weather = data.weather;
+            const irrigation = data.irrigation;
+
+            // Process data
+            const labels = weather.map(d => d.timestamp.split(' ')[0]);
+            const temps = weather.map(d => d.temp_max);
+            const rain = weather.map(d => d.precipitation);
+
+            // Map irrigation to dates
+            const irrigationMap = {};
+            irrigation.forEach(item => {
+                const date = item.timestamp.split(' ')[0];
+                if (!irrigationMap[date]) irrigationMap[date] = 0;
+                irrigationMap[date] += item.water_amount;
+            });
+
+            const irrigationData = labels.map(date => irrigationMap[date] || 0);
+            const totalSupply = labels.map((date, i) => rain[i] + (irrigationMap[date] || 0));
+
+            // 1. Water Balance Chart
+            new Chart(document.getElementById('waterBalanceChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Összes vízpótlás (mm)',
+                            data: totalSupply,
+                            borderColor: '#4facfe',
+                            backgroundColor: 'rgba(79, 172, 254, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                    }
+                }
+            });
+
+            // 2. Weather Chart
+            new Chart(document.getElementById('weatherChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Hőmérséklet (°C)',
+                            data: temps,
+                            type: 'line',
+                            borderColor: '#ff9a9e',
+                            yAxisID: 'y1',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Csapadék (mm)',
+                            data: rain,
+                            backgroundColor: '#a18cd1',
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: { color: '#ccc' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            ticks: { color: '#ff9a9e' },
+                            grid: { drawOnChartArea: false }
+                        },
+                        x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                    }
+                }
+            });
+
+            // 3. Source Chart
+            const totalRain = rain.reduce((a, b) => a + b, 0);
+            const totalIrrigation = irrigationData.reduce((a, b) => a + b, 0);
+
+            new Chart(document.getElementById('sourceChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Eső', 'Öntözés'],
+                    datasets: [{
+                        data: [totalRain, totalIrrigation],
+                        backgroundColor: ['#a18cd1', '#4facfe'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
+        }
+
+        fetchData();
+    </script>
+</body>
+
+</html>

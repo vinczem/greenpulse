@@ -74,4 +74,28 @@ async def read_logs(request: Request):
 async def read_settings(request: Request):
     return templates.TemplateResponse("settings.html", {"request": request, "config": config.options})
 
+@app.get("/analytics", response_class=HTMLResponse)
+async def read_analytics(request: Request):
+    return templates.TemplateResponse("analytics.html", {"request": request})
+
+@app.get("/api/chart-data")
+async def get_chart_data():
+    conn = db.get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # 1. Weather History (Last 30 days)
+    cursor.execute("SELECT * FROM weather_history ORDER BY timestamp ASC LIMIT 30")
+    weather_data = cursor.fetchall()
+    
+    # 2. Irrigation History (Last 30 days)
+    cursor.execute("SELECT * FROM irrigation_logs WHERE event_type IN ('manual', 'watering_end') ORDER BY timestamp ASC")
+    irrigation_data = cursor.fetchall()
+    
+    cursor.close()
+    
+    return {
+        "weather": weather_data,
+        "irrigation": irrigation_data
+    }
+
 # We will add the startup event in main.py or here if this becomes the entry point.

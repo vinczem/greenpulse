@@ -1,4 +1,10 @@
 # Changelog
+## [0.1.18] - 2025-12-02
+Add three dynamic charts:
+- Vízmérleg: Shows the water supply history.
+- Időjárás trendek: Temperature and rain history.
+- Vízforrás megoszlás: Rain vs. Irrigation ratio.
+
 ## [0.1.17] - 2025-12-02
 ### Added
 - **Manual Watering History**: It now looks back 3 days (matching the weather history) for any manual watering events.
