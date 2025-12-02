@@ -11,6 +11,18 @@ class CalculationEngine:
         self.min_amount = config.get("min_watering_amount", 5)
         self.max_amount = config.get("max_watering_amount", 25)
 
+    def get_soil_retention_factor(self):
+        """
+        Returns a factor based on soil type.
+        < 1.0: Poor retention (Sandy) -> Needs more water / frequent watering
+        > 1.0: Good retention (Clay) -> Needs less water / less frequent watering
+        """
+        st = self.soil_type.lower()
+        if "homok" in st: return 0.8
+        if "agyag" in st: return 1.2
+        if "humusz" in st: return 1.1
+        return 1.0
+
     def calculate_needs(self, current_weather, forecast, history_data):
         """
         Calculate irrigation needs based on weather data.
@@ -59,15 +71,21 @@ class CalculationEngine:
         
         total_water_supply = recent_rain + current_rain + (forecast_rain * 0.8) # 80% confidence in forecast
         
+        # Apply Soil Retention Factor
+        # If factor < 1 (Sandy), effective supply is reduced, increasing deficit.
+        # If factor > 1 (Clay), effective supply is increased, decreasing deficit.
+        retention_factor = self.get_soil_retention_factor()
+        effective_supply = total_water_supply * retention_factor
+        
         # Daily need approx
         daily_need = et_adjusted
         
         # If we look at a 3-day window
         three_day_need = daily_need * 3
         
-        deficit = three_day_need - total_water_supply
+        deficit = three_day_need - effective_supply
         
-        logger.info(f"Calc: ET={et_adjusted:.2f}, Supply={total_water_supply:.2f}, Deficit={deficit:.2f}")
+        logger.info(f"Calc: ET={et_adjusted:.2f}, Supply={total_water_supply:.2f} (Eff={effective_supply:.2f}), Deficit={deficit:.2f}")
         
         if deficit > self.min_amount:
             amount = min(deficit, self.max_amount)

@@ -1,5 +1,5 @@
 name: "GreenPulse"
-version: "0.1.6"
+version: "0.1.7"
 slug: "greenpulse"
 description: "Intelligent irrigation planner with OpenWeatherMap integration and local database."
 url: "https://github.com/vinczem/greenpulse"
@@ -47,20 +47,44 @@ schema:
   mqtt_topic_heartbeat: str
   mqtt_topic_feedback: str
   weather_update_interval_min: int
-  log_level: list(debug,info,warning,error,critical)
+  log_level:
+    selector:
+      select:
+        options:
+          - debug
+          - info
+          - warning
+          - error
+          - critical
   force_daily_watering: bool
   force_watering_minutes: int
-  grass_type: list(Univerzális keverék,Sportfű,Díszfű,Szárazságtűrő,Egyéb)
-  soil_type: list(Agyagos,Homokos,Vályog,Humuszos,Nem tudom)
+  grass_type:
+    selector:
+      select:
+        options:
+          - Univerzális keverék
+          - Sportfű
+          - Díszfű
+          - Szárazságtűrő
+          - Egyéb
+  soil_type:
+    selector:
+      select:
+        options:
+          - Agyagos
+          - Homokos
+          - Vályog
+          - Humuszos
+          - Nem tudom
   shade_percentage: int(0,100)
   min_watering_amount: float
   max_watering_amount: float
 ports:
-  8099/tcp: 8099
+  8088/tcp: 8088
   8081/tcp: 8081
 ports_description:
-  8099/tcp: Web Interface
+  8088/tcp: Web Interface
   8081/tcp: phpMyAdmin
 ingress: true
-ingress_port: 8099
+ingress_port: 8088
 panel_icon: mdi:sprinkler
