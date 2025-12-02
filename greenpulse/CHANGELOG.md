@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.8] - 2025-12-02
+
+### Fixed
+- **Configuration Schema**: Reverted `log_level`, `grass_type`, and `soil_type` to use `list(...)` syntax as `selector` is not supported in Add-on configuration.
+- **UI Formatting**: Added quotes to list options to ensure they are displayed correctly in the Home Assistant UI.
+
 ## [0.1.7] - 2025-12-02
 
 ### Added
