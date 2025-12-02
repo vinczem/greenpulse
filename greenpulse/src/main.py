@@ -114,8 +114,8 @@ def main():
     scheduler_thread.start()
     
     # Start Web Server
-    logger.info("Starting Web Server on port 8099...")
-    uvicorn.run(app, host="0.0.0.0", port=8099, log_level="info")
+    logger.info(f"Starting Web Server on port {config.web_port}...")
+    uvicorn.run(app, host="0.0.0.0", port=config.web_port, log_level="info")
 
 if __name__ == "__main__":
     main()

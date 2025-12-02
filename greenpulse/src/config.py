@@ -48,4 +48,8 @@ class Config:
     def db_name(self):
         return "greenpulse"
 
+    @property
+    def web_port(self):
+        return int(os.environ.get("GREENPULSE_WEB_PORT", 8088))
+
 config = Config()
