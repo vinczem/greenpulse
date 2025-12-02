@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.11] - 2025-12-02
+
+### Added
+- **Configuration**: Added `shade_percentage` to the configuration schema.
+
 ## [0.1.10] - 2025-12-02
 
 

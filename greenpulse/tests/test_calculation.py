@@ -12,8 +12,8 @@ from calculation import CalculationEngine
 class MockConfig:
     def __init__(self):
         self.data = {
-            "grass_type": "universal",
-            "soil_type": "loam",
+            "grass_type": "Univerzális keverék",
+            "soil_type": "Vályog",
             "shade_percentage": 0,
             "min_watering_amount": 5,
             "max_watering_amount": 25
@@ -105,7 +105,7 @@ class TestSoilTypes(unittest.TestCase):
         
     def test_sandy_soil(self):
         # Sandy soil (sandy) -> Factor 0.8 -> Effective supply reduced -> Higher deficit
-        self.mock_config.data["soil_type"] = "sandy"
+        self.mock_config.data["soil_type"] = "Homokos"
         engine_sand = CalculationEngine()
         
         # Scenario: Moderate rain, normally enough for Loam, but maybe not for Sand
@@ -143,13 +143,13 @@ class TestSoilTypes(unittest.TestCase):
         
         # Verify Loam first (control)
         # Deficit = 10.2 - 6.2 = 4.0 (< 5) -> False
-        self.mock_config.data["soil_type"] = "loam"
+        self.mock_config.data["soil_type"] = "Vályog"
         engine_loam = CalculationEngine()
         req_l, amt_l, _ = engine_loam.calculate_needs(current, forecast, history)
         
         # Verify Sand
         # Deficit = 10.2 - (6.2 * 0.8) = 10.2 - 4.96 = 5.24 (> 5) -> True
-        self.mock_config.data["soil_type"] = "sandy"
+        self.mock_config.data["soil_type"] = "Homokos"
         engine_sand = CalculationEngine()
         req_s, amt_s, _ = engine_sand.calculate_needs(current, forecast, history)
         
@@ -181,12 +181,12 @@ class TestSoilTypes(unittest.TestCase):
         forecast = {'total_rain_next_24h': 0}
         
         # Verify Loam (control)
-        self.mock_config.data["soil_type"] = "loam"
+        self.mock_config.data["soil_type"] = "Vályog"
         engine_loam = CalculationEngine()
         req_l, amt_l, _ = engine_loam.calculate_needs(current, forecast, history)
         
         # Verify Clay
-        self.mock_config.data["soil_type"] = "clay"
+        self.mock_config.data["soil_type"] = "Agyagos"
         engine_clay = CalculationEngine()
         req_c, amt_c, _ = engine_clay.calculate_needs(current, forecast, history)
         

@@ -1,5 +1,5 @@
 name: "GreenPulse"
-version: "0.1.10"
+version: "0.1.11"
 slug: "greenpulse"
 description: "Intelligent irrigation planner with OpenWeatherMap integration and local database"
 url: "https://github.com/vinczem/greenpulse"
@@ -14,6 +14,7 @@ map:
   - config:rw
   - share:rw
 options:
+
   openweathermap_api_key: ""
   latitude: 0.0
   longitude: 0.0
@@ -29,8 +30,8 @@ options:
   log_level: "info"
   force_daily_watering: false
   force_watering_minutes: 15
-  grass_type: "universal"
-  soil_type: "loam"
+  grass_type: "Univerzális keverék"
+  soil_type: "Vályog"
   shade_percentage: 0
   min_watering_amount: 5
   max_watering_amount: 25
@@ -50,8 +51,8 @@ schema:
   log_level: list(debug|info|warning|error|critical)
   force_daily_watering: bool
   force_watering_minutes: int
-  grass_type: list(universal|sport|ornamental|drought|other)
-  soil_type: list(clay|sandy|loam|humus|unknown)
+  grass_type: list("Univerzális keverék"|"Sportfű"|"Ornamentális"|"Szárazságtűrő"|"Egyéb")
+  soil_type: list("Agyagos"|"Homokos"|"Vályog"|"Humuszos"|"Ismeretlen")
   shade_percentage: int(0,100)
   min_watering_amount: float
   max_watering_amount: float
@@ -63,4 +64,3 @@ ports_description:
   8081/tcp: phpMyAdmin
 ingress: true
 ingress_port: 8088
-panel_icon: mdi:sprinkler
