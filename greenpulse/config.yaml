@@ -1,5 +1,5 @@
 name: "GreenPulse"
-version: "0.1.8"
+version: "0.1.9"
 slug: "greenpulse"
 description: "Intelligent irrigation planner with OpenWeatherMap integration and local database"
 url: "https://github.com/vinczem/greenpulse"
@@ -29,8 +29,8 @@ options:
   log_level: "info"
   force_daily_watering: false
   force_watering_minutes: 15
-  grass_type: "Univerzális keverék"
-  soil_type: "Vályog"
+  grass_type: "universal"
+  soil_type: "loam"
   shade_percentage: 0
   min_watering_amount: 5
   max_watering_amount: 25
@@ -47,11 +47,11 @@ schema:
   mqtt_topic_heartbeat: str
   mqtt_topic_feedback: str
   weather_update_interval_min: int
-  log_level: list("debug","info","warning","error","critical")
+  log_level: list(debug,info,warning,error,critical)
   force_daily_watering: bool
   force_watering_minutes: int
-  grass_type: list("Univerzális keverék","Sportfű","Díszfű","Szárazságtűrő","Egyéb")
-  soil_type: list("Agyagos","Homokos","Vályog","Humuszos","Nem tudom")
+  grass_type: list(universal,sport,ornamental,drought,other)
+  soil_type: list(clay,sandy,loam,humus,unknown)
   shade_percentage: int(0,100)
   min_watering_amount: float
   max_watering_amount: float

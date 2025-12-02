@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.9] - 2025-12-02
+
+### Changed
+- **Configuration Keys**: Switched to simple English keys (slugs) for `grass_type` and `soil_type` to resolve Home Assistant UI issues.
+    - Grass: `universal`, `sport`, `ornamental`, `drought`, `other`
+    - Soil: `clay`, `sandy`, `loam`, `humus`, `unknown`
+- **Documentation**: Updated the Dashboard to map these new keys to their Hungarian descriptions.
+
 ## [0.1.8] - 2025-12-02
 
 ### Fixed

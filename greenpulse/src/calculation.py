@@ -5,8 +5,8 @@ logger = logging.getLogger("GreenPulse.Calc")
 
 class CalculationEngine:
     def __init__(self):
-        self.grass_type = config.get("grass_type", "Univerzális keverék")
-        self.soil_type = config.get("soil_type", "Vályog")
+        self.grass_type = config.get("grass_type", "universal")
+        self.soil_type = config.get("soil_type", "loam")
         self.shade_pct = config.get("shade_percentage", 0)
         self.min_amount = config.get("min_watering_amount", 5)
         self.max_amount = config.get("max_watering_amount", 25)
@@ -18,9 +18,9 @@ class CalculationEngine:
         > 1.0: Good retention (Clay) -> Needs less water / less frequent watering
         """
         st = self.soil_type.lower()
-        if "homok" in st: return 0.8
-        if "agyag" in st: return 1.2
-        if "humusz" in st: return 1.1
+        if "sandy" in st: return 0.8
+        if "clay" in st: return 1.2
+        if "humus" in st: return 1.1
         return 1.0
 
     def calculate_needs(self, current_weather, forecast, history_data):
@@ -48,8 +48,8 @@ class CalculationEngine:
         
         # 2. Crop Coefficient (Kc)
         kc = 1.0
-        if self.grass_type == "Sportfű": kc = 1.1
-        elif self.grass_type == "Szárazságtűrő": kc = 0.7
+        if self.grass_type == "sport": kc = 1.1
+        elif self.grass_type == "drought": kc = 0.7
         
         # 3. Shade adjustment
         # Shade reduces ET
