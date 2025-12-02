@@ -1,5 +1,5 @@
 name: "GreenPulse"
-version: "0.1.22"
+version: "0.1.23"
 slug: "greenpulse"
 description: "Intelligent irrigation planner with OpenWeatherMap integration and local database"
 url: "https://github.com/vinczem/greenpulse"

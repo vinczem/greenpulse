@@ -67,14 +67,15 @@
             const irrigation = data.irrigation;
 
             // Process data
-            const labels = weather.map(d => d.timestamp.split(' ')[0]);
+            // Use substring(0, 10) to handle both "YYYY-MM-DD HH:MM:SS" and "YYYY-MM-DDTHH:MM:SS"
+            const labels = weather.map(d => String(d.timestamp).substring(0, 10));
             const temps = weather.map(d => d.temp_max);
             const rain = weather.map(d => d.precipitation);
 
             // Map irrigation to dates
             const irrigationMap = {};
             irrigation.forEach(item => {
-                const date = item.timestamp.split(' ')[0];
+                const date = String(item.timestamp).substring(0, 10);
                 if (!irrigationMap[date]) irrigationMap[date] = 0;
                 irrigationMap[date] += item.water_amount;
             });
