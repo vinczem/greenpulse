@@ -40,10 +40,10 @@ configuration:
     description: "A naplózás részletessége."
   force_daily_watering:
     name: "Kényszerített napi öntözés"
-    description: "Ha be van kapcsolva, minden nap fog öntözni a megadott ideig, függetlenül a számítástól."
-  force_watering_minutes:
-    name: "Kényszerített öntözés (perc)"
-    description: "A kényszerített öntözés időtartama percekben."
+    description: "Ha be van kapcsolva, minden nap fog öntözni a lentebb megadott mennyiségben, függetlenül a számítástól."
+  force_watering_amount:
+    name: "Kényszerített öntözés (mm)"
+    description: "A kényszerített öntözés mennyisége milliméterben."
   grass_type:
     name: "Fű típusa"
     description: "A gyep típusa, amely befolyásolja a vízigényt."

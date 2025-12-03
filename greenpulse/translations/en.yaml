@@ -40,10 +40,10 @@ configuration:
     description: "Verbosity level of the logs."
   force_daily_watering:
     name: "Force Daily Watering"
-    description: "If enabled, watering will occur every day for the specified duration, regardless of calculations."
-  force_watering_minutes:
-    name: "Force Watering Duration (min)"
-    description: "Duration of forced watering in minutes."
+    description: "If enabled, watering will occur every day for the specified amount, regardless of calculations."
+  force_watering_amount:
+    name: "Force Watering Amount (mm)"
+    description: "Amount of water to apply in millimeters."
   grass_type:
     name: "Grass Type"
     description: "Type of grass, affecting water requirements."
