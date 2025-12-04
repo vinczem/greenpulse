@@ -41,11 +41,21 @@ async def read_root(request: Request):
     cursor.execute("SELECT * FROM irrigation_logs WHERE event_type IN ('watering_end', 'manual') ORDER BY timestamp DESC LIMIT 1")
     last_watering = cursor.fetchone()
     
-    # Recent weather history
-    cursor.execute("SELECT * FROM weather_history ORDER BY timestamp DESC LIMIT 5")
+    # Recent weather history (Limit to 3 as requested)
+    cursor.execute("SELECT * FROM weather_history ORDER BY timestamp DESC LIMIT 3")
     weather_history = cursor.fetchall()
     
     cursor.close()
+
+    # Fetch current weather and forecast for display
+    from weather import weather_service
+    current_weather = None
+    forecast_weather = None
+    try:
+        current_weather = weather_service.get_current_weather()
+        forecast_weather = weather_service.get_forecast()
+    except Exception as e:
+        logger.error(f"Error fetching weather for dashboard: {e}")
 
     import json
     if last_suggestion and last_suggestion.get('raw_data'):
@@ -58,7 +68,9 @@ async def read_root(request: Request):
         "request": request,
         "last_suggestion": last_suggestion,
         "last_watering": last_watering,
-        "weather_history": weather_history
+        "weather_history": weather_history,
+        "current_weather": current_weather,
+        "forecast_weather": forecast_weather
     })
 
 @app.get("/logs", response_class=HTMLResponse)

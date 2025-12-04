@@ -74,6 +74,36 @@
             </div>
         </div>
 
+        <div class="grid">
+            <div class="card">
+                <h2>Jelenlegi időjárás</h2>
+                {% if current_weather %}
+                <div class="status-value">
+                    {{ current_weather.temperature }} °C
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9em; color: #ccc;">
+                    <p>Páratartalom: {{ current_weather.humidity }} %</p>
+                    <p>Szélsebesség: {{ current_weather.wind_speed }} m/s</p>
+                    <p>Csapadék (ma): {{ current_weather.rain_amount }} mm</p>
+                </div>
+                {% else %}
+                <p>Nincs adat.</p>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h2>Előrejelzés (24h)</h2>
+                {% if forecast_weather %}
+                <div class="status-value">
+                    {{ forecast_weather.total_rain_next_24h }} mm
+                </div>
+                <p class="reason">Várható csapadék</p>
+                {% else %}
+                <p>Nincs adat.</p>
+                {% endif %}
+            </div>
+        </div>
+
         <div class="card full-width">
             <h2>Időjárás történet</h2>
             <table>

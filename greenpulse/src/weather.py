@@ -42,19 +42,29 @@ class WeatherService:
             data = response.json()
             # Process forecast to get next 24h summary
             # This is a simplified summary
-            total_rain = 0
+            # Process forecast to get next 24h and 3 days summary
+            total_rain_24h = 0
+            total_rain_3days = 0
             temp_max = -float('inf')
             temp_min = float('inf')
             
-            for item in data.get('list', [])[:8]: # Next 24h (3h intervals * 8)
+            # 24h = 8 items (3h steps)
+            # 3 days = 24 items
+            for i, item in enumerate(data.get('list', [])):
+                if i >= 24: break # Limit to 3 days
+                
                 rain = item.get('rain', {}).get('3h', 0)
-                total_rain += rain
-                temp = item.get('main', {}).get('temp', 0)
-                if temp > temp_max: temp_max = temp
-                if temp < temp_min: temp_min = temp
+                total_rain_3days += rain
+                
+                if i < 8: # First 24h
+                    total_rain_24h += rain
+                    temp = item.get('main', {}).get('temp', 0)
+                    if temp > temp_max: temp_max = temp
+                    if temp < temp_min: temp_min = temp
             
             return {
-                'total_rain_next_24h': total_rain,
+                'total_rain_next_24h': round(total_rain_24h, 1),
+                'total_rain_next_3days': round(total_rain_3days, 1),
                 'temp_max_next_24h': temp_max,
                 'temp_min_next_24h': temp_min
             }

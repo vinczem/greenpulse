@@ -65,7 +65,7 @@ class CalculationEngine:
         for day in history_data:
             recent_rain += day.get('precipitation', 0)
             
-        # Check forecast rain
+        # Check forecast rain (24h)
         forecast_rain = forecast.get('total_rain_next_24h', 0)
         
         # Current rain
