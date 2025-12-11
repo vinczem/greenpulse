@@ -77,7 +77,7 @@ async def read_root(request: Request):
 async def read_logs(request: Request):
     conn = db.get_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM irrigation_logs ORDER BY timestamp DESC LIMIT 50")
+    cursor.execute("SELECT * FROM irrigation_logs ORDER BY timestamp DESC LIMIT 300")
     logs = cursor.fetchall()
     cursor.close()
     return templates.TemplateResponse("logs.html", {"request": request, "logs": logs})

@@ -21,8 +21,23 @@
 
     <div class="container">
         <h1>Öntözési napló</h1>
+
+        <div
+            style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label>
+                    <input type="checkbox" id="filterImportant" checked onchange="filterLogs()">
+                    Csak a fontos események (Öntözés + Javaslat > 0)
+                </label>
+            </div>
+
+            <div style="font-size: 0.9em; color: #666;">
+                Megjelenítve: <span id="visibleCount">0</span> / {{ logs|length }} sor
+            </div>
+        </div>
+
         <div class="card full-width">
-            <table>
+            <table id="logsTable">
                 <thead>
                     <tr>
                         <th>Időpont</th>
@@ -33,7 +48,7 @@
                 </thead>
                 <tbody>
                     {% for log in logs %}
-                    <tr>
+                    <tr class="log-row" data-type="{{ log.event_type }}" data-amount="{{ log.water_amount }}">
                         <td>{{ log.timestamp }}</td>
                         <td>
                             <span class="badge {{ log.event_type }}">
@@ -48,6 +63,36 @@
             </table>
         </div>
     </div>
+
+    <script>
+        function filterLogs() {
+            const onlyImportant = document.getElementById('filterImportant').checked;
+            const rows = document.querySelectorAll('.log-row');
+            let visible = 0;
+
+            rows.forEach(row => {
+                const type = row.dataset.type;
+                const amount = parseFloat(row.dataset.amount || 0);
+
+                let show = true;
+
+                if (onlyImportant) {
+                    // Show if it's NOT a suggestion, OR if it IS a suggestion with amount > 0
+                    if (type === 'suggestion' && amount <= 0) {
+                        show = false;
+                    }
+                }
+
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            document.getElementById('visibleCount').textContent = visible;
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', filterLogs);
+    </script>
 </body>
 
 </html>

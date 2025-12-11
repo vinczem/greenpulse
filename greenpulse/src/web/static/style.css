@@ -64,6 +64,7 @@ nav .links a:hover, nav .links a.active {
 
 .card.full-width {
     grid-column: 1 / -1;
+    margin-bottom: 2rem;
 }
 
 .status-value {

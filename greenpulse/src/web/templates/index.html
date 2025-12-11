@@ -47,12 +47,6 @@
                         <li>Előrejelzés: {{ last_suggestion.raw_data.forecast_rain }} mm</li>
                     </ul>
                     <p><strong>Talaj korrekció:</strong> x{{ last_suggestion.raw_data.soil_retention_factor }}</p>
-                    <p><strong>Időjárás tényezők:</strong></p>
-                    <ul style="margin: 5px 0 0 20px; font-size: 0.85em; color: #ccc;">
-                        <li>Hőmérséklet: {{ last_suggestion.raw_data.temperature }} °C</li>
-                        <li>Páratartalom: {{ last_suggestion.raw_data.humidity }} %</li>
-                        <li>Szél: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
-                    </ul>
                 </div>
                 {% endif %}
                 {% else %}
