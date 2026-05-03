@@ -91,50 +91,75 @@ async def read_analytics(request: Request):
     return templates.TemplateResponse("analytics.html", {"request": request})
 
 @app.get("/api/chart-data")
-async def get_chart_data():
+async def get_chart_data(from_date: str = None, to_date: str = None):
+    from datetime import datetime, timedelta
+
+    # Default: last 30 days
+    if not to_date:
+        to_date = datetime.now().strftime("%Y-%m-%d")
+    if not from_date:
+        from_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+
+    # Validate format
+    try:
+        datetime.strptime(from_date, "%Y-%m-%d")
+        datetime.strptime(to_date, "%Y-%m-%d")
+    except ValueError:
+        from_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+        to_date = datetime.now().strftime("%Y-%m-%d")
+
+    from_dt = f"{from_date} 00:00:00"
+    to_dt   = f"{to_date} 23:59:59"
+
     conn = db.get_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    # 1. Weather History (Last 30 days)
-    cursor.execute("SELECT * FROM weather_history ORDER BY timestamp ASC LIMIT 30")
+
+    # 1. Weather History – filtered by date range, sorted ascending
+    cursor.execute(
+        "SELECT * FROM weather_history WHERE timestamp BETWEEN %s AND %s ORDER BY timestamp ASC",
+        (from_dt, to_dt)
+    )
     weather_data = cursor.fetchall()
-    
-    # 2. Irrigation History (Last 30 days)
-    cursor.execute("SELECT * FROM irrigation_logs WHERE event_type IN ('manual', 'watering_end') ORDER BY timestamp ASC")
+
+    # 2. Irrigation History – same date range
+    cursor.execute(
+        """SELECT * FROM irrigation_logs
+           WHERE event_type IN ('manual', 'watering_end')
+             AND timestamp BETWEEN %s AND %s
+           ORDER BY timestamp ASC""",
+        (from_dt, to_dt)
+    )
     irrigation_data = cursor.fetchall()
-    
+
     cursor.close()
 
-    # Append today's data to weather_data if not present
-    from datetime import datetime
+    # Append today's live data if today is within range and not yet in DB
     from weather import weather_service
-    
     today_str = datetime.now().strftime("%Y-%m-%d")
-    # Check if today is already in weather_data
-    has_today = False
-    if weather_data:
-        last_date = str(weather_data[-1]['timestamp']).split(' ')[0]
-        if last_date == today_str:
-            has_today = True
-            
-    if not has_today:
-        try:
-            current = weather_service.get_current_weather()
-            if current:
-                weather_data.append({
-                    "timestamp": f"{today_str} 12:00:00",
-                    "temp_max": current.get('temperature', 0), # Proxy
-                    "temp_min": current.get('temperature', 0), # Proxy
-                    "precipitation": current.get('rain_amount', 0),
-                    "humidity": current.get('humidity', 0),
-                    "wind_speed": current.get('wind_speed', 0)
-                })
-        except Exception as e:
-            logger.error(f"Error fetching current weather for chart: {e}")
-    
+    if from_date <= today_str <= to_date:
+        has_today = any(
+            str(d['timestamp']).startswith(today_str) for d in weather_data
+        )
+        if not has_today:
+            try:
+                current = weather_service.get_current_weather()
+                if current:
+                    weather_data.append({
+                        "timestamp": f"{today_str} 12:00:00",
+                        "temp_max": current.get('temperature', 0),
+                        "temp_min": current.get('temperature', 0),
+                        "precipitation": current.get('rain_amount', 0),
+                        "humidity": current.get('humidity', 0),
+                        "wind_speed": current.get('wind_speed', 0)
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching current weather for chart: {e}")
+
     return {
         "weather": weather_data,
-        "irrigation": irrigation_data
+        "irrigation": irrigation_data,
+        "from_date": from_date,
+        "to_date": to_date
     }
 
 # We will add the startup event in main.py or here if this becomes the entry point.

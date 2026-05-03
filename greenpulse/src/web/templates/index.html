@@ -38,15 +38,26 @@
                 {% if last_suggestion.raw_data %}
                 <div class="details-box"
                     style="margin-top: 15px; text-align: left; font-size: 0.9em; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
-                    <p><strong>Számított vízigény (ET):</strong> {{ last_suggestion.raw_data.et_adjusted }} mm/nap</p>
+                    <p><strong>Párolgás (ET alap):</strong> {{ last_suggestion.raw_data.et0 }} mm/nap</p>
+                    <p><strong>ET korrekciós szorzó:</strong>
+                        <span style="color: {% if last_suggestion.raw_data.et_correction_factor > 1.0 %}#ffb347{% elif last_suggestion.raw_data.et_correction_factor < 1.0 %}#4facfe{% else %}#ccc{% endif %};">
+                            x{{ last_suggestion.raw_data.et_correction_factor }}
+                        </span>
+                    </p>
+                    <p><strong>Korrigált vízigény (ET):</strong> {{ last_suggestion.raw_data.et_adjusted }} mm/nap</p>
                     <p><strong>Rendelkezésre álló víz:</strong> {{ last_suggestion.raw_data.effective_supply }} mm</p>
                     <ul style="margin: 5px 0 10px 20px; font-size: 0.85em; color: #ccc;">
                         <li>Eső (múlt+jelen): {{ last_suggestion.raw_data.recent_rain +
                             last_suggestion.raw_data.current_rain }} mm</li>
                         <li>Öntözés (múlt): {{ last_suggestion.raw_data.irrigation_history }} mm</li>
                         <li>Előrejelzés: {{ last_suggestion.raw_data.forecast_rain }} mm</li>
+                        <li>Szélsebesség hatása: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
                     </ul>
                     <p><strong>Talaj korrekció:</strong> x{{ last_suggestion.raw_data.soil_retention_factor }}</p>
+                    <p style="margin-top:8px; font-size:0.82em; color: {% if last_suggestion.raw_data.deficit > last_suggestion.raw_data.min_watering_amount %}#a8e6cf{% elif last_suggestion.raw_data.deficit > 0 %}#ffb347{% else %}#4facfe{% endif %};">
+                        <strong>Vízhiány:</strong> {{ last_suggestion.raw_data.deficit }} mm
+                        (öntözési küszöb: {{ last_suggestion.raw_data.min_watering_amount }} mm)
+                    </p>
                 </div>
                 {% endif %}
                 {% else %}

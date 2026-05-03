@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.34] - 2026-05-03
+
+### Added
+- **ET korrekciós szorzó** (`et_correction_factor`): Új konfigurációs opció, amely a becsült párolgás (ET) értékét skálázza.
+  - Alapértelmezés: `1.0` (nincs korrekció)
+  - Szeles, nyílt területen ajánlott: `1.2–1.5`
+  - Árnyékos, védett területen: `0.7–0.9`
+  - Ez lehetővé teszi, hogy a rendszer a helyi mikroklímához igazodjon, és a valóban tapasztalt fűszáradásra reagáljon.
+- A dashboard részletes nézetben megjelenik az ET alap, a korrekciós szorzó, a szél hatása és a vízhiány küszöbhöz viszonyítva.
+
+### Fixed
+- **Statisztika (analytics) oldal**: Teljesen újraírt grafikonok.
+  - Stacked bar chart a napi vízpótláshoz (csapadék + öntözés)
+  - Dual-axis időjárás grafikon (hőmérséklet + csapadék)
+  - Öntözési esemény histogram (csak öntözési napokat mutat)
+  - Donut chart forrás-megoszláshoz
+  - KPI összesítő sor (összes csapadék, öntözés, öntözési napok, átlag hőm.)
+  - Robusztus null-kezelés és dátumrendezés
+
 ## [0.1.27]
 Kényszerített öntözés logikája:
 Mértékegység váltás: A beállításokban a force_watering_minutes helyett mostantól force_watering_amount van, ami mm-ben (liter/m²) várja az értéket. (A régi perc alapú beállítás törlődött).

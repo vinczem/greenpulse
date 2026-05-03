@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenPulse Statisztika</title>
+    <title>GreenPulse – Statisztika</title>
     <link rel="stylesheet" href="static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -23,25 +23,101 @@
     <div class="container">
         <header>
             <h1>Statisztika</h1>
+            <p style="color: #aaa; font-size: 0.9em; margin-top: 4px;">Elmúlt 30 nap időjárási és öntözési összesítő</p>
         </header>
 
+        <!-- Date range picker -->
+        <div class="card" style="padding: 16px 20px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                <div>
+                    <label for="from-date" style="display:block; font-size:0.85em; color:#aaa; margin-bottom:4px;">Id&#337;szak kezdete</label>
+                    <input type="date" id="from-date"
+                        style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e0e0e0; padding: 8px 12px; border-radius: 8px; font-size: 0.95em;">
+                </div>
+                <div>
+                    <label for="to-date" style="display:block; font-size:0.85em; color:#aaa; margin-bottom:4px;">Id&#337;szak v&#233;ge</label>
+                    <input type="date" id="to-date"
+                        style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e0e0e0; padding: 8px 12px; border-radius: 8px; font-size: 0.95em;">
+                </div>
+                <button onclick="applyDateRange()"
+                    style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: #000; border: none; padding: 9px 22px; border-radius: 8px; font-size: 0.95em; font-weight: 600; cursor: pointer;">Alkalmaz</button>
+                <button onclick="setQuickRange(7)"
+                    style="background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15); padding: 9px 16px; border-radius: 8px; font-size: 0.9em; cursor: pointer;">7 nap</button>
+                <button onclick="setQuickRange(30)"
+                    style="background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15); padding: 9px 16px; border-radius: 8px; font-size: 0.9em; cursor: pointer;">30 nap</button>
+                <button onclick="setQuickRange(90)"
+                    style="background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15); padding: 9px 16px; border-radius: 8px; font-size: 0.9em; cursor: pointer;">90 nap</button>
+            </div>
+        </div>
+
+        <div id="error-banner" style="display:none;" class="card">
+            <p>⚠ Hiba az adatok betöltésekor. Ellenőrizd a konzolt.</p>
+        </div>
+
+        <!-- Summary KPI row -->
+        <div class="grid" id="kpi-row" style="display:none;">
+            <div class="card" style="text-align:center;">
+                <p style="color:#aaa; font-size:0.85em; margin-bottom:4px;">Összes csapadék</p>
+                <div class="status-value" id="kpi-rain">–</div>
+                <p style="color:#aaa; font-size:0.8em;">mm</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <p style="color:#aaa; font-size:0.85em; margin-bottom:4px;">Összes öntözés</p>
+                <div class="status-value" id="kpi-irrigation">–</div>
+                <p style="color:#aaa; font-size:0.8em;">mm</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <p style="color:#aaa; font-size:0.85em; margin-bottom:4px;">Öntözési napok</p>
+                <div class="status-value" id="kpi-days">–</div>
+                <p style="color:#aaa; font-size:0.8em;">nap</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <p style="color:#aaa; font-size:0.85em; margin-bottom:4px;">Átlag hőmérséklet</p>
+                <div class="status-value" id="kpi-temp">–</div>
+                <p style="color:#aaa; font-size:0.8em;">°C</p>
+            </div>
+        </div>
+
         <div class="grid">
+            <!-- Chart 1: Water balance (ET vs supply) -->
             <div class="card full-width">
-                <h2>Vízmérleg (elmúlt 30 nap)</h2>
+                <h2>Napi vízmérleg</h2>
+                <p style="color:#aaa; font-size:0.85em; margin-top:-8px; margin-bottom:12px;">
+                    Csapadék + öntözés összege naponként
+                </p>
                 <div class="chart-container">
                     <canvas id="waterBalanceChart"></canvas>
                 </div>
             </div>
 
+            <!-- Chart 2: Weather -->
             <div class="card full-width">
                 <h2>Időjárás trendek</h2>
+                <p style="color:#aaa; font-size:0.85em; margin-top:-8px; margin-bottom:12px;">
+                    Maximális hőmérséklet (°C) és napi csapadék (mm)
+                </p>
                 <div class="chart-container">
                     <canvas id="weatherChart"></canvas>
                 </div>
             </div>
 
+            <!-- Chart 3: Irrigation events -->
+            <div class="card">
+                <h2>Öntözési események</h2>
+                <p style="color:#aaa; font-size:0.85em; margin-top:-8px; margin-bottom:12px;">
+                    Naponkénti öntözési mennyiség (mm)
+                </p>
+                <div class="chart-container">
+                    <canvas id="irrigationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 4: Source donut -->
             <div class="card">
                 <h2>Vízforrás megoszlás</h2>
+                <p style="color:#aaa; font-size:0.85em; margin-top:-8px; margin-bottom:12px;">
+                    Eső vs. öntözés arány (mm)
+                </p>
                 <div class="chart-container">
                     <canvas id="sourceChart"></canvas>
                 </div>
@@ -50,153 +126,295 @@
     </div>
 
     <script>
+        // ─── Date helpers ────────────────────────────────────────────────────────────
+        function toISODate(d) {
+            return d.toISOString().split('T')[0];
+        }
+
+        function initDatePicker() {
+            const today = new Date();
+            const ago30 = new Date(today);
+            ago30.setDate(today.getDate() - 30);
+            document.getElementById('to-date').value   = toISODate(today);
+            document.getElementById('from-date').value = toISODate(ago30);
+        }
+
+        function setQuickRange(days) {
+            const today = new Date();
+            const from  = new Date(today);
+            from.setDate(today.getDate() - days);
+            document.getElementById('to-date').value   = toISODate(today);
+            document.getElementById('from-date').value = toISODate(from);
+            applyDateRange();
+        }
+
+        function applyDateRange() {
+            // Destroy existing charts before re-rendering (Chart.js v3/v4 compatible)
+            Object.values(Chart.instances).forEach(c => c.destroy());
+            document.getElementById('kpi-row').style.display = 'none';
+            fetchData();
+        }
+
+        // ─── Helpers ────────────────────────────────────────────────────────────────
+        const legendOpts = {
+            display: true,
+            position: 'top',
+            labels: { color: '#e0e0e0', font: { size: 12 }, padding: 15, boxWidth: 15 }
+        };
+        const axisStyle = (color = '#ccc') => ({
+            ticks: { color },
+            grid: { color: 'rgba(255,255,255,0.08)' }
+        });
+
+        function safeNum(v) {
+            const n = parseFloat(v);
+            return isNaN(n) ? 0 : n;
+        }
+
+        // ─── Fetch & render ──────────────────────────────────────────────────────────
         async function fetchData() {
+            const fromDate = document.getElementById('from-date').value;
+            const toDate   = document.getElementById('to-date').value;
+            const params   = new URLSearchParams({ from_date: fromDate, to_date: toDate });
             try {
-                const response = await fetch('api/chart-data');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                renderCharts(data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.querySelector('.container').insertAdjacentHTML('afterbegin', '<div class="card" style="background: #ff5252; color: white;">Hiba az adatok betöltésekor. Ellenőrizd a konzolt.</div>');
+                const res = await fetch(`api/chart-data?${params}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                renderAll(data);
+            } catch (err) {
+                console.error('Chart data error:', err);
+                document.getElementById('error-banner').style.display = '';
             }
         }
 
-        function renderCharts(data) {
-            const weather = data.weather;
-            const irrigation = data.irrigation;
+        function renderAll(data) {
+            const weather = (data.weather || []).sort((a, b) =>
+                String(a.timestamp).localeCompare(String(b.timestamp)));
+            const irrigation = data.irrigation || [];
 
-            // Process data
-            // Use substring(0, 10) to handle both "YYYY-MM-DD HH:MM:SS" and "YYYY-MM-DDTHH:MM:SS"
-            const labels = weather.map(d => String(d.timestamp).substring(0, 10));
-            const temps = weather.map(d => d.temp_max);
-            const rain = weather.map(d => d.precipitation);
+            // ── Build date-indexed maps ──────────────────────────────────────────
+            const dateLabels = weather.map(d => String(d.timestamp).substring(0, 10));
 
-            // Map irrigation to dates
-            const irrigationMap = {};
-            irrigation.forEach(item => {
-                const date = String(item.timestamp).substring(0, 10);
-                if (!irrigationMap[date]) irrigationMap[date] = 0;
-                irrigationMap[date] += item.water_amount;
+            const rainByDate = {};
+            const tempByDate = {};
+            dateLabels.forEach((date, i) => {
+                rainByDate[date] = (rainByDate[date] || 0) + safeNum(weather[i].precipitation);
+                // Use average of max/min if available, else just temp_max
+                const tmax = safeNum(weather[i].temp_max);
+                const tmin = safeNum(weather[i].temp_min);
+                tempByDate[date] = tmax; // show max temp
             });
 
-            const irrigationData = labels.map(date => irrigationMap[date] || 0);
-            const totalSupply = labels.map((date, i) => rain[i] + (irrigationMap[date] || 0));
-
-            // Common legend options
-            const legendOptions = {
-                display: true,
-                position: 'top',
-                align: 'center',
-                labels: {
-                    color: '#e0e0e0',
-                    font: { size: 12 },
-                    padding: 15,
-                    boxWidth: 15
+            // Irrigation: sum by date
+            const irrigByDate = {};
+            let irrigDaysSet = new Set();
+            irrigation.forEach(item => {
+                const date = String(item.timestamp).substring(0, 10);
+                const amt = safeNum(item.water_amount);
+                if (amt > 0) {
+                    irrigByDate[date] = (irrigByDate[date] || 0) + amt;
+                    irrigDaysSet.add(date);
                 }
-            };
+            });
 
-            // 1. Water Balance Chart
+            // Unique sorted labels (union of weather + irrigation dates)
+            const allDatesSet = new Set([...dateLabels, ...Object.keys(irrigByDate)]);
+            const allDates = Array.from(allDatesSet).sort();
+
+            // ── Arrays aligned to allDates ───────────────────────────────────────
+            const rainArr = allDates.map(d => rainByDate[d] || 0);
+            const irrigArr = allDates.map(d => irrigByDate[d] || 0);
+            const tempArr = allDates.map(d => tempByDate[d] || null); // null → gap in line
+            const totalSupplyArr = allDates.map((d, i) => rainArr[i] + irrigArr[i]);
+
+            // ── KPIs ─────────────────────────────────────────────────────────────
+            const totalRain = rainArr.reduce((a, b) => a + b, 0);
+            const totalIrrig = irrigArr.reduce((a, b) => a + b, 0);
+            const validTemps = tempArr.filter(t => t !== null);
+            const avgTemp = validTemps.length
+                ? (validTemps.reduce((a, b) => a + b, 0) / validTemps.length).toFixed(1)
+                : '–';
+
+            document.getElementById('kpi-rain').textContent = totalRain.toFixed(1);
+            document.getElementById('kpi-irrigation').textContent = totalIrrig.toFixed(1);
+            document.getElementById('kpi-days').textContent = irrigDaysSet.size;
+            document.getElementById('kpi-temp').textContent = avgTemp;
+            document.getElementById('kpi-row').style.display = '';
+
+            // ── Chart 1: Water Balance (stacked bars + total line) ───────────────
             new Chart(document.getElementById('waterBalanceChart'), {
-                type: 'line',
                 data: {
-                    labels: labels,
+                    labels: allDates,
                     datasets: [
                         {
+                            type: 'bar',
+                            label: 'Csapadék (mm)',
+                            data: rainArr,
+                            backgroundColor: 'rgba(161,140,209,0.7)',
+                            stack: 'supply',
+                            order: 2
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Öntözés (mm)',
+                            data: irrigArr,
+                            backgroundColor: 'rgba(79,172,254,0.85)',
+                            stack: 'supply',
+                            order: 2
+                        },
+                        {
+                            type: 'line',
                             label: 'Összes vízpótlás (mm)',
-                            data: totalSupply,
-                            borderColor: '#4facfe',
-                            backgroundColor: 'rgba(79, 172, 254, 0.2)',
-                            fill: true,
-                            tension: 0.4
+                            data: totalSupplyArr,
+                            borderColor: '#00e5ff',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.3,
+                            order: 1
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: legendOptions
-                    },
+                    plugins: { legend: legendOpts },
                     scales: {
-                        y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        y: { ...axisStyle(), stacked: true, beginAtZero: true },
+                        x: { ...axisStyle(), ticks: { color: '#ccc', maxRotation: 45 } }
                     }
                 }
             });
 
-            // 2. Weather Chart
+            // ── Chart 2: Weather dual-axis ───────────────────────────────────────
             new Chart(document.getElementById('weatherChart'), {
-                type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: allDates,
                     datasets: [
                         {
-                            label: 'Hőmérséklet (°C)',
-                            data: temps,
-                            type: 'line',
-                            borderColor: '#ff9a9e',
-                            yAxisID: 'y1',
-                            tension: 0.4
+                            type: 'bar',
+                            label: 'Csapadék (mm)',
+                            data: rainArr,
+                            backgroundColor: 'rgba(161,140,209,0.7)',
+                            yAxisID: 'yRain',
+                            order: 2
                         },
                         {
-                            label: 'Csapadék (mm)',
-                            data: rain,
-                            backgroundColor: '#a18cd1',
-                            yAxisID: 'y'
+                            type: 'line',
+                            label: 'Max hőmérséklet (°C)',
+                            data: tempArr,
+                            borderColor: '#ff9a9e',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.4,
+                            spanGaps: true,
+                            yAxisID: 'yTemp',
+                            order: 1
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: legendOptions
-                    },
+                    plugins: { legend: legendOpts },
                     scales: {
-                        y: {
+                        yRain: {
                             type: 'linear',
-                            display: true,
                             position: 'left',
-                            ticks: { color: '#ccc' },
-                            grid: { color: 'rgba(255,255,255,0.1)' }
+                            beginAtZero: true,
+                            title: { display: true, text: 'Csapadék (mm)', color: '#a18cd1' },
+                            ...axisStyle('#a18cd1')
                         },
-                        y1: {
+                        yTemp: {
                             type: 'linear',
-                            display: true,
                             position: 'right',
+                            title: { display: true, text: 'Hőmérséklet (°C)', color: '#ff9a9e' },
                             ticks: { color: '#ff9a9e' },
                             grid: { drawOnChartArea: false }
                         },
-                        x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        x: { ...axisStyle(), ticks: { color: '#ccc', maxRotation: 45 } }
                     }
                 }
             });
 
-            // 3. Source Chart
-            const totalRain = rain.reduce((a, b) => a + b, 0);
-            const totalIrrigation = irrigationData.reduce((a, b) => a + b, 0);
+            // ── Chart 3: Irrigation events bar ───────────────────────────────────
+            // Show only dates with irrigation
+            const irrigDates = allDates.filter(d => (irrigByDate[d] || 0) > 0);
+            const irrigAmts = irrigDates.map(d => irrigByDate[d]);
 
-            new Chart(document.getElementById('sourceChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Eső', 'Öntözés'],
-                    datasets: [{
-                        data: [totalRain, totalIrrigation],
-                        backgroundColor: ['#a18cd1', '#4facfe'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: legendOptions
+            if (irrigDates.length === 0) {
+                // No irrigation data – show placeholder text
+                const ctx3 = document.getElementById('irrigationChart').getContext('2d');
+                ctx3.fillStyle = '#888';
+                ctx3.font = '14px sans-serif';
+                ctx3.textAlign = 'center';
+                ctx3.fillText('Nincs öntözési adat az időszakban.', ctx3.canvas.width / 2, ctx3.canvas.height / 2);
+            } else {
+                new Chart(document.getElementById('irrigationChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: irrigDates,
+                        datasets: [{
+                            label: 'Öntözés (mm)',
+                            data: irrigAmts,
+                            backgroundColor: irrigDates.map((d, i) =>
+                                // Highlight manual vs auto – all are "blue" family
+                                `hsla(${200 + i * 8}, 80%, 60%, 0.8)`
+                            ),
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: legendOpts },
+                        scales: {
+                            y: { ...axisStyle(), beginAtZero: true },
+                            x: { ...axisStyle(), ticks: { color: '#ccc' } }
+                        }
                     }
-                }
-            });
+                });
+            }
+
+            // ── Chart 4: Source donut ────────────────────────────────────────────
+            if (totalRain === 0 && totalIrrig === 0) {
+                const ctx4 = document.getElementById('sourceChart').getContext('2d');
+                ctx4.fillStyle = '#888';
+                ctx4.font = '14px sans-serif';
+                ctx4.textAlign = 'center';
+                ctx4.fillText('Nincs adat.', ctx4.canvas.width / 2, ctx4.canvas.height / 2);
+            } else {
+                new Chart(document.getElementById('sourceChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Eső', 'Öntözés'],
+                        datasets: [{
+                            data: [totalRain.toFixed(1), totalIrrig.toFixed(1)],
+                            backgroundColor: ['#a18cd1', '#4facfe'],
+                            borderWidth: 0,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: legendOpts,
+                            tooltip: {
+                                callbacks: {
+                                    label: ctx => ` ${ctx.label}: ${ctx.parsed} mm`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
 
+        initDatePicker();
         fetchData();
     </script>
 </body>

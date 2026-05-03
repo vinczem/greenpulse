@@ -10,6 +10,7 @@ class CalculationEngine:
         self.shade_pct = config.get("shade_percentage", 0)
         self.min_amount = config.get("min_watering_amount", 5)
         self.max_amount = config.get("max_watering_amount", 25)
+        self.et_correction_factor = config.get("et_correction_factor", 1.0)
         self.force_daily = config.get("force_daily_watering", False)
         self.force_amount = config.get("force_watering_amount", 5.0)
 
@@ -53,9 +54,10 @@ class CalculationEngine:
         if self.grass_type == "Sportfű": kc = 1.1
         elif self.grass_type == "Szárazságtűrő": kc = 0.7
         
-        # 3. Shade adjustment
-        # Shade reduces ET
-        et_adjusted = et0 * kc * (1 - (self.shade_pct / 200)) # 50% shade reduces ET by 25% approx
+        # 3. ET Correction Factor (local microclimate calibration)
+        # Values > 1.0 increase ET (e.g. windy garden, south-facing slope)
+        # Values < 1.0 decrease ET (e.g. sheltered, shaded area)
+        et_adjusted = et0 * kc * (1 - (self.shade_pct / 200)) * self.et_correction_factor
         
         # 4. Water Balance
         # Deficit = ET_adjusted - Effective Rainfall
@@ -99,12 +101,14 @@ class CalculationEngine:
             "forecast_rain": round(forecast_rain, 2),
             "current_rain": round(current_rain, 2),
             "irrigation_history": round(irrigation_history_amount, 2),
+            "et_correction_factor": self.et_correction_factor,
             "soil_retention_factor": retention_factor,
             "shade_factor": self.shade_pct,
             "wind_speed": wind,
             "temperature": temp,
             "humidity": humidity,
-            "kc": kc
+            "kc": kc,
+            "min_watering_amount": self.min_amount
         }
 
         # Forced Watering Logic

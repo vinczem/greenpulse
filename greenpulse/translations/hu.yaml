@@ -59,3 +59,6 @@ configuration:
   max_watering_amount:
     name: "Max. öntözés (mm)"
     description: "A maximális öntözési mennyiség milliméterben."
+  et_correction_factor:
+    name: "ET korrekciós szorzó"
+    description: "A párolgás (ET) számított értékének helyi kalibrációs szorzója. 1.0 = alap. Szeles, nyílt területen emeld 1.2–1.5-re; védett, árnyékos területen csökkentsd 0.7–0.9-re. Ez a legkönnyebb módja annak, hogy a rendszer a valós fűszáradáshoz igazodjon."
