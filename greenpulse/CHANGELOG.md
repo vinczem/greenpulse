@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.35] - 2026-05-03
+
+### Fixed
+- **Starlette API kompatibilitás**: A `TemplateResponse` hívási formája frissítve Starlette 0.36+ kompatibilisre (`request` első argumentumként, nem a context dict-ben). Ez okozta a 500-as hibát az ingress betöltésekor.
+- **requirements.txt**: `fastapi` és `starlette` verzió pinelve a jövőbeli API-változások elkerülésére.
+
 ## [0.1.34] - 2026-05-03
 
 ### Added

@@ -64,8 +64,7 @@ async def read_root(request: Request):
         except:
             last_suggestion['raw_data'] = {}
     
-    return templates.TemplateResponse("index.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "index.html", {
         "last_suggestion": last_suggestion,
         "last_watering": last_watering,
         "weather_history": weather_history,
@@ -80,15 +79,15 @@ async def read_logs(request: Request):
     cursor.execute("SELECT * FROM irrigation_logs ORDER BY timestamp DESC LIMIT 300")
     logs = cursor.fetchall()
     cursor.close()
-    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs})
+    return templates.TemplateResponse(request, "logs.html", {"logs": logs})
 
 @app.get("/settings", response_class=HTMLResponse)
 async def read_settings(request: Request):
-    return templates.TemplateResponse("settings.html", {"request": request, "config": config.options})
+    return templates.TemplateResponse(request, "settings.html", {"config": config.options})
 
 @app.get("/analytics", response_class=HTMLResponse)
 async def read_analytics(request: Request):
-    return templates.TemplateResponse("analytics.html", {"request": request})
+    return templates.TemplateResponse(request, "analytics.html", {})
 
 @app.get("/api/chart-data")
 async def get_chart_data(from_date: str = None, to_date: str = None):
