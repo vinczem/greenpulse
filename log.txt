@@ -1,0 +1,32 @@
+2026-05-05 06:54:52	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 05:54:49	SUGGESTION	0.0 L/m²	A vízhiány (1.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 04:54:46	SUGGESTION	0.0 L/m²	A vízhiány (1.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 03:54:43	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 02:54:41	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 01:54:38	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 00:54:35	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 23:54:33	SUGGESTION	0.0 L/m²	A vízhiány (1.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 22:54:30	SUGGESTION	0.0 L/m²	A vízhiány (1.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 21:54:27	SUGGESTION	0.0 L/m²	A vízhiány (2.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 20:54:24	SUGGESTION	0.0 L/m²	A vízhiány (2.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 19:54:22	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 18:54:19	SUGGESTION	0.0 L/m²	A vízhiány (3.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 17:54:16	SUGGESTION	0.0 L/m²	A vízhiány (3.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 16:54:13	SUGGESTION	0.0 L/m²	A vízhiány (4.0 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 15:54:10	SUGGESTION	0.0 L/m²	A vízhiány (4.0 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 14:54:07	SUGGESTION	0.0 L/m²	A vízhiány (4.0 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 13:54:05	SUGGESTION	0.0 L/m²	A vízhiány (3.9 mm) nem éri el a minimumot (5.0 mm).
+2026-05-04 12:54:02	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 11:53:59	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 10:53:56	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 09:53:54	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 08:53:50	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 07:53:47	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 06:53:45	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 06:00:17	WATERING_END	0.0 L/m²	Automatikus háromfázisú öntözés befejezve.
+2026-05-04 05:53:42	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 04:53:38	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 03:53:34	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 02:53:31	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 01:53:29	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-04 00:53:26	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).

@@ -130,6 +130,16 @@ async def get_chart_data(from_date: str = None, to_date: str = None):
     )
     irrigation_data = cursor.fetchall()
 
+    # 3. Suggestion History - for water deficit chart
+    cursor.execute(
+        """SELECT timestamp, raw_data FROM irrigation_logs
+           WHERE event_type = 'suggestion'
+             AND timestamp BETWEEN %s AND %s
+           ORDER BY timestamp ASC""",
+        (from_dt, to_dt)
+    )
+    suggestion_data = cursor.fetchall()
+
     cursor.close()
 
     # Append today's live data if today is within range and not yet in DB
@@ -157,6 +167,7 @@ async def get_chart_data(from_date: str = None, to_date: str = None):
     return {
         "weather": weather_data,
         "irrigation": irrigation_data,
+        "suggestions": suggestion_data,
         "from_date": from_date,
         "to_date": to_date
     }

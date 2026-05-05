@@ -90,6 +90,17 @@
                 </div>
             </div>
 
+            <!-- Chart 1.5: Hourly Water Deficit -->
+            <div class="card full-width">
+                <h2>Óránkénti vízhiány</h2>
+                <p style="color:#aaa; font-size:0.85em; margin-top:-8px; margin-bottom:12px;">
+                    A becsült vízhiány alakulása és az öntözési küszöb (mm)
+                </p>
+                <div class="chart-container">
+                    <canvas id="deficitChart"></canvas>
+                </div>
+            </div>
+
             <!-- Chart 2: Weather -->
             <div class="card full-width">
                 <h2>Időjárás trendek</h2>
@@ -217,6 +228,26 @@
                 }
             });
 
+            // ── Suggestions (Hourly Deficit) ─────────────────────────────────────
+            const suggestions = data.suggestions || [];
+            const deficitLabels = [];
+            const deficitData = [];
+            let deficitThreshold = 5.0;
+
+            suggestions.forEach(s => {
+                try {
+                    const dt = new Date(s.timestamp);
+                    const label = `${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')} ${String(dt.getHours()).padStart(2,'0')}:00`;
+                    const raw = typeof s.raw_data === 'string' ? JSON.parse(s.raw_data) : s.raw_data;
+                    
+                    if (raw && raw.deficit !== undefined) {
+                        deficitLabels.push(label);
+                        deficitData.push(safeNum(raw.deficit));
+                        if (raw.min_watering_amount) deficitThreshold = safeNum(raw.min_watering_amount);
+                    }
+                } catch(e) {}
+            });
+
             // Unique sorted labels (union of weather + irrigation dates)
             const allDatesSet = new Set([...dateLabels, ...Object.keys(irrigByDate)]);
             const allDates = Array.from(allDatesSet).sort();
@@ -285,6 +316,52 @@
                     }
                 }
             });
+
+            // ── Chart 1.5: Hourly Water Deficit ──────────────────────────────────
+            if (deficitLabels.length > 0) {
+                new Chart(document.getElementById('deficitChart'), {
+                    type: 'line',
+                    data: {
+                        labels: deficitLabels,
+                        datasets: [
+                            {
+                                label: 'Vízhiány (mm)',
+                                data: deficitData,
+                                borderColor: '#f39c12',
+                                backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                                fill: true,
+                                borderWidth: 2,
+                                pointRadius: 1,
+                                tension: 0.3
+                            },
+                            {
+                                label: `Öntözési küszöb (${deficitThreshold} mm)`,
+                                data: Array(deficitLabels.length).fill(deficitThreshold),
+                                borderColor: 'rgba(255, 99, 132, 0.8)',
+                                borderDash: [5, 5],
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: legendOpts },
+                        scales: {
+                            y: { ...axisStyle(), beginAtZero: true },
+                            x: { ...axisStyle(), ticks: { color: '#ccc', maxRotation: 45, maxTicksLimit: 24 } }
+                        }
+                    }
+                });
+            } else {
+                const ctxD = document.getElementById('deficitChart').getContext('2d');
+                ctxD.fillStyle = '#888';
+                ctxD.font = '14px sans-serif';
+                ctxD.textAlign = 'center';
+                ctxD.fillText('Nincs vízhiány adat.', ctxD.canvas.width / 2, ctxD.canvas.height / 2);
+            }
 
             // ── Chart 2: Weather dual-axis ───────────────────────────────────────
             new Chart(document.getElementById('weatherChart'), {

@@ -39,9 +39,9 @@ class CalculationEngine:
         # ET0 approx = 0.0023 * (Tmean + 17.8) * (Tmax - Tmin)^0.5 * Ra (Radiation)
         # Without radiation, we use a base value adjusted by temp and humidity.
         
-        temp = current_weather['temperature']
-        humidity = current_weather['humidity']
-        wind = current_weather['wind_speed']
+        temp = (forecast.get('temp_max_next_24h', current_weather['temperature']) + forecast.get('temp_min_next_24h', current_weather['temperature'])) / 2
+        humidity = forecast.get('avg_humidity_next_24h', current_weather['humidity'])
+        wind = forecast.get('avg_wind_speed_next_24h', current_weather['wind_speed'])
         
         # Base ET for the day (mm/day)
         et0 = 0.0
@@ -135,10 +135,10 @@ class CalculationEngine:
             if deficit > 0:
                 return False, 0, f"A vízhiány ({deficit:.1f} mm) nem éri el a minimumot ({self.min_amount} mm).", details
             elif forecast_rain > 5:
-                return False, 0, "Eső várható a következő 24 órában.", details
+                return False, 0, f"Eső várható a következő 24 órában. Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
             elif recent_rain > 10:
-                return False, 0, "Az elmúlt napok csapadéka elegendő.", details
+                return False, 0, f"Az elmúlt napok csapadéka elegendő. Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
             else:
-                return False, 0, "Nincs szükség öntözésre (egyensúlyban).", details
+                return False, 0, f"Nincs szükség öntözésre (egyensúlyban). Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
 
 calculator = CalculationEngine()

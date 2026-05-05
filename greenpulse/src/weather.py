@@ -47,6 +47,8 @@ class WeatherService:
             total_rain_3days = 0
             temp_max = -float('inf')
             temp_min = float('inf')
+            total_humidity_24h = 0
+            total_wind_24h = 0
             
             # 24h = 8 items (3h steps)
             # 3 days = 24 items
@@ -61,12 +63,16 @@ class WeatherService:
                     temp = item.get('main', {}).get('temp', 0)
                     if temp > temp_max: temp_max = temp
                     if temp < temp_min: temp_min = temp
+                    total_humidity_24h += item.get('main', {}).get('humidity', 0)
+                    total_wind_24h += item.get('wind', {}).get('speed', 0)
             
             return {
                 'total_rain_next_24h': round(total_rain_24h, 1),
                 'total_rain_next_3days': round(total_rain_3days, 1),
                 'temp_max_next_24h': temp_max,
-                'temp_min_next_24h': temp_min
+                'temp_min_next_24h': temp_min,
+                'avg_humidity_next_24h': round(total_humidity_24h / 8, 1) if data.get('list') else 50,
+                'avg_wind_speed_next_24h': round(total_wind_24h / 8, 1) if data.get('list') else 0
             }
         except Exception as e:
             logger.error(f"Error fetching forecast: {e}")

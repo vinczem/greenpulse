@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.37] - 2026-05-05
+
+### Changed
+- **ET (Evapotranszspiráció) számítás finomítása**: A pillanatnyi időjárási adatok helyett a napi előrejelzés átlagaira (középhőmérséklet, átlagos páratartalom és szélsebesség) épül a párolgás becslése. Ez megszünteti a vízhiány értékének irreális esti ingadozását. A csapadék és öntözés levonása továbbra is valós időben történik.
+
+### Added
+- **Óránkénti vízhiány grafikon**: A Statisztika (analytics) oldalon megjelent egy új, órás bontású vonaldiagram, amelyen az öntözési küszöb is vízszintes vonallal van ábrázolva, így részletesen követhető a becsült vízhiány napközbeni alakulása.
+
 ## [0.1.35] - 2026-05-03
 
 ### Fixed
