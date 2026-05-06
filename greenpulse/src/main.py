@@ -60,23 +60,43 @@ def job_check_weather_and_calculate():
             except Exception as e:
                 logger.error(f"DB Error saving history: {e}")
 
-    # 2. Calculate Needs
-    # Fetch irrigation history (last 3 days to match weather history)
-    irrigation_history_amount = 0
+    # 2. Get System State
+    current_deficit = 0.0
+    interval_min = config.get("weather_update_interval_min", 60)
+    last_calculated = datetime.now() - timedelta(minutes=interval_min)
     try:
         conn = db.get_connection()
         cursor = conn.cursor()
-        # Calculate start date (3 days ago)
-        start_date = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("SELECT water_deficit, last_calculated FROM system_state WHERE id = 1")
+        result = cursor.fetchone()
+        if result:
+            current_deficit = float(result[0])
+            if result[1]:
+                last_calculated = result[1]
+        cursor.close()
+    except Exception as e:
+        logger.error(f"DB Error fetching system state: {e}")
+
+    # Calculate interval hours
+    now = datetime.now()
+    interval_hours = (now - last_calculated).total_seconds() / 3600.0
+    if interval_hours <= 0 or interval_hours > 24: # Fallback or too long (e.g. first run)
+        interval_hours = interval_min / 60.0
+
+    # Fetch irrigation history since last_calculated
+    irrigation_amount = 0.0
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
         cursor.execute("""
             SELECT SUM(water_amount) as total 
             FROM irrigation_logs 
             WHERE event_type IN ('manual', 'watering_end') 
             AND timestamp >= %s
-        """, (start_date,))
+        """, (last_calculated,))
         result = cursor.fetchone()
         if result and result[0]:
-            irrigation_history_amount = float(result[0])
+            irrigation_amount = float(result[0])
         cursor.close()
     except Exception as e:
         logger.error(f"DB Error fetching irrigation history: {e}")
@@ -100,7 +120,19 @@ def job_check_weather_and_calculate():
     except Exception as e:
         logger.error(f"DB Error checking today's watering: {e}")
 
-    required, amount, reason, details = calculator.calculate_needs(current, forecast, history_data, irrigation_history_amount, has_watered_today)
+    required, amount, reason, new_deficit, details = calculator.calculate_needs(
+        current_deficit, current, forecast, interval_hours, irrigation_amount, has_watered_today
+    )
+    
+    # Save new deficit
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE system_state SET water_deficit = %s, last_calculated = %s WHERE id = 1", (float(new_deficit), now))
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        logger.error(f"DB Error updating system state: {e}")
     
     # 3. Publish Result
     mqtt_client.publish_command(required, amount, reason)

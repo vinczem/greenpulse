@@ -30,3 +30,26 @@
 2026-05-04 02:53:31	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
 2026-05-04 01:53:29	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
 2026-05-04 00:53:26	SUGGESTION	0.0 L/m²	Nincs szükség öntözésre (egyensúlyban).
+2026-05-06 06:33:17	SUGGESTION	0.0 L/m²	A vízhiány (0.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 05:33:14	SUGGESTION	0.0 L/m²	A vízhiány (0.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 04:33:11	SUGGESTION	0.0 L/m²	A vízhiány (1.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 03:33:09	SUGGESTION	0.0 L/m²	A vízhiány (1.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 02:33:05	SUGGESTION	0.0 L/m²	A vízhiány (2.0 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 01:33:03	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-06 00:33:00	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 23:32:57	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 22:32:54	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 21:32:51	SUGGESTION	0.0 L/m²	A vízhiány (3.0 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 20:32:48	SUGGESTION	0.0 L/m²	A vízhiány (2.6 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 19:32:45	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 18:32:43	SUGGESTION	0.0 L/m²	A vízhiány (2.8 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 17:32:40	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 16:32:37	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 15:32:34	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 14:32:31	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 13:32:28	SUGGESTION	0.0 L/m²	A vízhiány (2.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 12:32:25	SUGGESTION	0.0 L/m²	A vízhiány (2.4 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 11:32:22	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 10:32:19	SUGGESTION	0.0 L/m²	A vízhiány (2.5 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 09:32:16	SUGGESTION	0.0 L/m²	A vízhiány (2.2 mm) nem éri el a minimumot (5.0 mm).
+2026-05-05 08:32:16	SUGGESTION	0.0 L/m²	A vízhiány (2.6 mm) nem éri el a minimumot (5.0 mm).

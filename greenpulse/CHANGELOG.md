@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.38] - 2026-05-06
+
+### Changed
+- **Folyamatos vízmérleg számítás**: A rendszer mostantól nem pillanatképeket készít a vízhiányról az előrejelzések alapján, hanem egy folyamatosan vezetett "bankszámlaként" kezeli azt.
+  - A vízhiány minden órában növekszik az elmúlt óra párolgásával (ET).
+  - A leesett csapadék és a végrehajtott öntözések valós mennyisége azonnal levonódik a hiányból.
+  - A vízhiány értéke nem mehet 0 alá (a túltelített talajból a víz kifolyik/elszivárog).
+- **Adatbázis bővítés**: Új `system_state` tábla a rendszer aktuális állapotának (vízhiány, utolsó kalkuláció ideje) tartós mentéséhez.
+
 ## [0.1.37] - 2026-05-05
 
 ### Changed

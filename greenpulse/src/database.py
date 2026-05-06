@@ -61,6 +61,15 @@ class Database:
                     et_value FLOAT
                 )
             """)
+            # Table: system_state
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS system_state (
+                    id INT PRIMARY KEY,
+                    water_deficit FLOAT,
+                    last_calculated DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            cursor.execute("INSERT IGNORE INTO system_state (id, water_deficit) VALUES (1, 0.0)")
             
             self.conn.commit()
             logger.info("Database initialized successfully.")
@@ -77,5 +86,29 @@ class Database:
     def close(self):
         if self.conn and self.conn.is_connected():
             self.conn.close()
+
+    def get_water_deficit(self):
+        cursor = self.get_connection().cursor()
+        try:
+            cursor.execute("SELECT water_deficit FROM system_state WHERE id = 1")
+            result = cursor.fetchone()
+            if result:
+                return float(result[0])
+            return 0.0
+        except mysql.connector.Error as err:
+            logger.error(f"Error fetching water deficit: {err}")
+            return 0.0
+        finally:
+            cursor.close()
+
+    def update_water_deficit(self, new_deficit):
+        cursor = self.get_connection().cursor()
+        try:
+            cursor.execute("UPDATE system_state SET water_deficit = %s, last_calculated = CURRENT_TIMESTAMP WHERE id = 1", (float(new_deficit),))
+            self.get_connection().commit()
+        except mysql.connector.Error as err:
+            logger.error(f"Error updating water deficit: {err}")
+        finally:
+            cursor.close()
 
 db = Database()

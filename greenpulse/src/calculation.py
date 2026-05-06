@@ -26,81 +26,65 @@ class CalculationEngine:
         if "humuszos" in st: return 1.1
         return 1.0
 
-    def calculate_needs(self, current_weather, forecast, history_data, irrigation_history_amount=0, has_watered_today=False):
+    def calculate_needs(self, current_deficit, current_weather, forecast, interval_hours, irrigation_amount=0, has_watered_today=False):
         """
-        Calculate irrigation needs based on weather data.
-        Returns: (required: bool, amount: float, reason: str, details: dict)
+        Calculate irrigation needs based on cumulative water balance.
+        Returns: (required: bool, amount: float, reason: str, new_deficit: float, details: dict)
         """
         if not current_weather or not forecast:
-            return False, 0, "Hiányzó időjárási adatok", {}
+            return False, 0, "Hiányzó időjárási adatok", current_deficit, {}
 
-        # 1. Calculate ET0 (Reference Evapotranspiration) - Simplified Penman-Monteith approximation
-        # We use a very simplified formula here for demonstration.
-        # ET0 approx = 0.0023 * (Tmean + 17.8) * (Tmax - Tmin)^0.5 * Ra (Radiation)
-        # Without radiation, we use a base value adjusted by temp and humidity.
+        # 1. Calculate ET0 (Reference Evapotranspiration) using current instantaneous weather
+        temp = current_weather.get('temperature', 20)
+        humidity = current_weather.get('humidity', 50)
+        wind = current_weather.get('wind_speed', 0)
         
-        temp = (forecast.get('temp_max_next_24h', current_weather['temperature']) + forecast.get('temp_min_next_24h', current_weather['temperature'])) / 2
-        humidity = forecast.get('avg_humidity_next_24h', current_weather['humidity'])
-        wind = forecast.get('avg_wind_speed_next_24h', current_weather['wind_speed'])
-        
-        # Base ET for the day (mm/day)
+        # Base ET rate for the day (mm/day)
         et0 = 0.0
         if temp > 10:
             et0 = (0.04 * temp) - (0.01 * humidity) + (0.1 * wind)
             if et0 < 0: et0 = 0
+            
+        # Interval ET (proportion of the day)
+        interval_et0 = et0 * (interval_hours / 24.0)
         
         # 2. Crop Coefficient (Kc)
         kc = 1.0
         if self.grass_type == "Sportfű": kc = 1.1
         elif self.grass_type == "Szárazságtűrő": kc = 0.7
         
-        # 3. ET Correction Factor (local microclimate calibration)
-        # Values > 1.0 increase ET (e.g. windy garden, south-facing slope)
-        # Values < 1.0 decrease ET (e.g. sheltered, shaded area)
-        et_adjusted = et0 * kc * (1 - (self.shade_pct / 200)) * self.et_correction_factor
+        # 3. ET Correction Factor
+        et_adjusted = interval_et0 * kc * (1 - (self.shade_pct / 200)) * self.et_correction_factor
         
-        # 4. Water Balance
-        # Deficit = ET_adjusted - Effective Rainfall
-        
-        # Check recent history (last 3 days)
-        recent_rain = 0
-        for day in history_data:
-            recent_rain += day.get('precipitation', 0)
+        # 4. Water Supply
+        # Current rain from API (usually 1h volume). Scale by interval roughly if interval != 1.
+        current_rain = current_weather.get('rain_amount', 0)
+        if interval_hours != 1.0 and interval_hours > 0:
+            current_rain = current_rain * interval_hours
             
-        # Check forecast rain (24h)
+        retention_factor = self.get_soil_retention_factor()
+        effective_rain = current_rain * retention_factor
+        
+        # 5. Cumulative Balance
+        # Deficit increases with ET, decreases with rain and irrigation
+        new_deficit = current_deficit + et_adjusted - effective_rain - irrigation_amount
+        new_deficit = max(0.0, new_deficit) # Clamp at 0 (field capacity), excess water runs off
+        
+        deficit = new_deficit
         forecast_rain = forecast.get('total_rain_next_24h', 0)
         
-        # Current rain
-        current_rain = current_weather.get('rain_amount', 0)
-        
-        total_water_supply = recent_rain + current_rain + (forecast_rain * 0.8) + irrigation_history_amount # 80% confidence in forecast
-        
-        # Apply Soil Retention Factor
-        # If factor < 1 (Sandy), effective supply is reduced, increasing deficit.
-        # If factor > 1 (Clay), effective supply is increased, decreasing deficit.
-        retention_factor = self.get_soil_retention_factor()
-        effective_supply = total_water_supply * retention_factor
-        
-        # Daily need approx
-        daily_need = et_adjusted
-        
-        # If we look at a 3-day window
-        three_day_need = daily_need * 3
-        
-        deficit = three_day_need - effective_supply
-        
-        logger.info(f"Calc: ET={et_adjusted:.2f}, Supply={total_water_supply:.2f} (Eff={effective_supply:.2f}), Deficit={deficit:.2f}")
+        logger.info(f"Calc: ET={et_adjusted:.2f}, Rain={effective_rain:.2f}, Irr={irrigation_amount:.2f}, Deficit: {current_deficit:.2f} -> {deficit:.2f}")
         
         details = {
-            "et0": round(et0, 2),
+            "et0_rate": round(et0, 2),
+            "interval_et0": round(interval_et0, 2),
             "et_adjusted": round(et_adjusted, 2),
-            "total_water_supply": round(total_water_supply, 2),
-            "effective_supply": round(effective_supply, 2),
-            "deficit": round(deficit, 2),
-            "recent_rain": round(recent_rain, 2),
-            "forecast_rain": round(forecast_rain, 2),
             "current_rain": round(current_rain, 2),
-            "irrigation_history": round(irrigation_history_amount, 2),
+            "effective_rain": round(effective_rain, 2),
+            "irrigation_amount": round(irrigation_amount, 2),
+            "previous_deficit": round(current_deficit, 2),
+            "new_deficit": round(deficit, 2),
+            "forecast_rain": round(forecast_rain, 2),
             "et_correction_factor": self.et_correction_factor,
             "soil_retention_factor": retention_factor,
             "shade_factor": self.shade_pct,
@@ -108,37 +92,37 @@ class CalculationEngine:
             "temperature": temp,
             "humidity": humidity,
             "kc": kc,
+            "interval_hours": interval_hours,
             "min_watering_amount": self.min_amount
         }
 
         # Forced Watering Logic
         if self.force_daily and not has_watered_today:
-            # We must water at least force_amount
-            # Check if weather calculation suggests more
             weather_amount = 0
             if deficit > self.min_amount:
                 weather_amount = min(deficit, self.max_amount)
             
             if weather_amount > self.force_amount:
-                return True, round(weather_amount, 1), f"Időjárás alapú öntözés (több mint a kényszerített {self.force_amount} mm).", details
+                return True, round(weather_amount, 1), f"Időjárás alapú öntözés (több mint a kényszerített {self.force_amount} mm).", deficit, details
             else:
-                return True, round(self.force_amount, 1), "Kényszerített napi öntözés.", details
+                return True, round(self.force_amount, 1), "Kényszerített napi öntözés.", deficit, details
 
         # Standard Logic
         if deficit > self.min_amount:
             amount = min(deficit, self.max_amount)
-            reason = f"Vízhiány: {deficit:.1f} mm. ET: {et_adjusted:.1f} mm/nap."
+            reason = f"Vízhiány: {deficit:.1f} mm. (Küszöb: {self.min_amount} mm)"
             if deficit > self.max_amount:
                 reason += f" (Maximumra korlátozva: {self.max_amount} mm)"
-            return True, round(amount, 1), reason, details
+                
+            # Wait if rain is forecasted
+            if forecast_rain > 5:
+                return False, 0, f"Eső várható a következő 24 órában ({forecast_rain} mm). Vízhiány: {deficit:.2f} mm.", deficit, details
+                
+            return True, round(amount, 1), reason, deficit, details
         else:
             if deficit > 0:
-                return False, 0, f"A vízhiány ({deficit:.1f} mm) nem éri el a minimumot ({self.min_amount} mm).", details
-            elif forecast_rain > 5:
-                return False, 0, f"Eső várható a következő 24 órában. Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
-            elif recent_rain > 10:
-                return False, 0, f"Az elmúlt napok csapadéka elegendő. Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
+                return False, 0, f"A vízhiány ({deficit:.1f} mm) nem éri el a minimumot ({self.min_amount} mm).", deficit, details
             else:
-                return False, 0, f"Nincs szükség öntözésre (egyensúlyban). Vízhiány: {deficit:.2f} mm (öntözési küszöb: {self.min_amount:.1f} mm)", details
+                return False, 0, f"Nincs szükség öntözésre (egyensúlyban).", deficit, details
 
 calculator = CalculationEngine()
