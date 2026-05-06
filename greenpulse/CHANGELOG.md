@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.39] - 2026-05-06
+
+### Fixed
+- **Dashboard Hotfix**: Jinja2 sablon hiba javítása a `Statisztika` oldalon, amit a folyamatos vízmérleg adatszerkezetének megváltozása okozott.
+
 ## [0.1.38] - 2026-05-06
 
 ### Changed
