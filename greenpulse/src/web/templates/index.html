@@ -44,12 +44,11 @@
                             x{{ last_suggestion.raw_data.et_correction_factor }}
                         </span>
                     </p>
-                    <p><strong>Korrigált vízigény (ET):</strong> {{ last_suggestion.raw_data.et_adjusted }} mm/nap</p>
-                    <p><strong>Rendelkezésre álló víz:</strong> {{ last_suggestion.raw_data.effective_supply }} mm</p>
+                    <p><strong>Korrigált vízigény (ET):</strong> {{ last_suggestion.raw_data.et_adjusted }} mm</p>
+                    <p><strong>Előző vízhiány:</strong> {{ last_suggestion.raw_data.previous_deficit }} mm</p>
                     <ul style="margin: 5px 0 10px 20px; font-size: 0.85em; color: #ccc;">
-                        <li>Eső (múlt+jelen): {{ last_suggestion.raw_data.recent_rain +
-                            last_suggestion.raw_data.current_rain }} mm</li>
-                        <li>Öntözés (múlt): {{ last_suggestion.raw_data.irrigation_history }} mm</li>
+                        <li>Eső (utolsó frissítés óta): {{ last_suggestion.raw_data.effective_rain }} mm</li>
+                        <li>Öntözés (utolsó frissítés óta): {{ last_suggestion.raw_data.irrigation_amount }} mm</li>
                         <li>Előrejelzés: {{ last_suggestion.raw_data.forecast_rain }} mm</li>
                         <li>Szélsebesség hatása: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
                     </ul>
