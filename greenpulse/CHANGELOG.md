@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.40] - 2026-05-06
+
+### Fixed
+- **Dashboard Hotfix 2**: További Jinja2 sablon változó hivatkozási hiba (deficit -> new_deficit) javítása a dashboardon.
+
 ## [0.1.39] - 2026-05-06
 
 ### Fixed

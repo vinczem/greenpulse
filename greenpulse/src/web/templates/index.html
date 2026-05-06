@@ -53,8 +53,8 @@
                         <li>Szélsebesség hatása: {{ last_suggestion.raw_data.wind_speed }} m/s</li>
                     </ul>
                     <p><strong>Talaj korrekció:</strong> x{{ last_suggestion.raw_data.soil_retention_factor }}</p>
-                    <p style="margin-top:8px; font-size:0.82em; color: {% if last_suggestion.raw_data.deficit > last_suggestion.raw_data.min_watering_amount %}#a8e6cf{% elif last_suggestion.raw_data.deficit > 0 %}#ffb347{% else %}#4facfe{% endif %};">
-                        <strong>Vízhiány:</strong> {{ last_suggestion.raw_data.deficit }} mm
+                    <p style="margin-top:8px; font-size:0.82em; color: {% if last_suggestion.raw_data.new_deficit > last_suggestion.raw_data.min_watering_amount %}#a8e6cf{% elif last_suggestion.raw_data.new_deficit > 0 %}#ffb347{% else %}#4facfe{% endif %};">
+                        <strong>Vízhiány:</strong> {{ last_suggestion.raw_data.new_deficit }} mm
                         (öntözési küszöb: {{ last_suggestion.raw_data.min_watering_amount }} mm)
                     </p>
                 </div>
